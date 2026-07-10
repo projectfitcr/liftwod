@@ -42,6 +42,19 @@ const paths: Record<string, React.ReactNode> = {
       <path d="M12 2.5l1.8 3.2 3.7.5-1.2 3.5 2.5 2.8-3.3 1.7-.7 3.7-3.8-1.1-3.8 1.1-.7-3.7-3.3-1.7 2.5-2.8L4.5 6.2l3.7-.5L12 2.5z" />
     </>
   ),
+  memberships: (
+    <>
+      <rect x="2.5" y="5" width="19" height="14" rx="2" />
+      <circle cx="8.5" cy="11" r="2" />
+      <path d="M5 16.5c.7-1.6 1.9-2.4 3.5-2.4s2.8.8 3.5 2.4M15 9.5h4M15 13h4" />
+    </>
+  ),
+  plans: (
+    <>
+      <path d="M3.5 8.5l8.5-5 8.5 5v7l-8.5 5-8.5-5v-7z" />
+      <path d="M12 3.5V21M3.5 8.5L12 13l8.5-4.5" />
+    </>
+  ),
 };
 
 export type IconName = keyof typeof paths & string;

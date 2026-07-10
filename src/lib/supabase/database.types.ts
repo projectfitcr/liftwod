@@ -1318,6 +1318,7 @@ export type Database = {
       membership_summaries: {
         Row: {
           cancelled_at: string | null
+          duration_months: number | null
           end_date: string | null
           id: string | null
           member_id: string | null

@@ -4,13 +4,19 @@ import Link from "next/link";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 import { Card } from "@/components/ui/Card";
+import {
+  MembershipStatusCard,
+  type MembershipSummary,
+} from "@/components/membership/MembershipStatusCard";
 
 export function ProfileView({
   fullName,
   email,
+  summary,
 }: {
   fullName: string;
   email: string;
+  summary: MembershipSummary | null;
 }) {
   const { t } = useLanguage();
 
@@ -41,10 +47,7 @@ export function ProfileView({
         </div>
       </Card>
 
-      <Card>
-        <p className="mb-1 text-sm font-medium">{t("profile.membership")}</p>
-        <p className="text-sm text-ink-tertiary">{t("profile.noMembership")}</p>
-      </Card>
+      <MembershipStatusCard summary={summary} />
     </div>
   );
 }
