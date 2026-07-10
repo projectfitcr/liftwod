@@ -42,6 +42,13 @@ const paths: Record<string, React.ReactNode> = {
       <path d="M12 2.5l1.8 3.2 3.7.5-1.2 3.5 2.5 2.8-3.3 1.7-.7 3.7-3.8-1.1-3.8 1.1-.7-3.7-3.3-1.7 2.5-2.8L4.5 6.2l3.7-.5L12 2.5z" />
     </>
   ),
+  wod: (
+    <>
+      <path d="M2 12h2M20 12h2M7 12h10" />
+      <rect x="4" y="7" width="3" height="10" rx="1" />
+      <rect x="17" y="7" width="3" height="10" rx="1" />
+    </>
+  ),
   memberships: (
     <>
       <rect x="2.5" y="5" width="19" height="14" rx="2" />

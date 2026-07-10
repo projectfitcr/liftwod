@@ -18,6 +18,7 @@ export const MEMBER_NAV: NavItem[] = [
 
 /** TopBar links for coach AND admin. */
 export const STAFF_NAV: NavItem[] = [
+  { href: "/coach/wods", labelKey: "nav.wods", icon: "wod" },
   { href: "/coach/members", labelKey: "nav.members", icon: "users" },
 ];
 
