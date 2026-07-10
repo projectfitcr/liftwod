@@ -1,0 +1,9 @@
+{
+  "regions": ["sin1"],
+  "crons": [
+    {
+      "path": "/api/cron/generate-sessions",
+      "schedule": "0 18 * * *"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/* LIFTwod runs dark by default (Joel's direction, 2026-07-10): brand-black
+   canvas matching the logo assets, with the four logo colors doing semantic
+   work — orange = primary/CTA, magenta = PR/Rx, teal = success/checked-in,
+   purple = Scaled/info. Warning amber and danger red are deliberately NOT
+   brand colors so state pills never read as buttons. */
+:root {
+  --canvas: #0b0b0f;
+  --surface: #17151a;
+  --surface-raised: #1f1d24;
+  --hairline: #2b2830;
+  --row-hover: #211f27;
+  --ink-primary: #f7f6f4;
+  --ink-secondary: #b6b2bc;
+  --ink-tertiary: #7c7884;
+
+  /* Brand palette (sampled from the LIFTwod wordmark) */
+  --brand-orange: #f5871f;
+  --brand-teal: #29c5c0;
+  --brand-magenta: #e91e7b;
+  --brand-purple: #a05cb3;
+
+  /* Primary = orange: CTAs, active nav, focus */
+  --primary: #f5871f;
+  --primary-ink: #ffb46a;
+  --primary-soft: #3a2410;
+  /* Accent = magenta: PR badges, Rx marker, leaderboard highlights */
+  --accent: #e91e7b;
+  --accent-ink: #ff7ab3;
+  --accent-soft: #3c1226;
+  /* Teal = success: checked in, booking confirmed */
+  --success: #29c5c0;
+  --success-ink: #7fe3df;
+  --success-soft: #0e2f2e;
+  /* Purple = info: Scaled marker, secondary chrome */
+  --info: #a05cb3;
+  --info-ink: #cf9edd;
+  --info-soft: #2b1a30;
+  /* Semantic states, distinct from brand hues */
+  --warning: #d9a406;
+  --warning-ink: #f0cf6b;
+  --warning-soft: #322708;
+  --danger: #e05252;
+  --danger-ink: #ff9d9d;
+  --danger-soft: #3a1414;
+
+  --radius-lg: 12px;
+  --radius-sm: 7px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.65);
+  --focus-ring: 0 0 0 3px rgba(245, 135, 31, 0.35);
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-hairline: var(--hairline);
+  --color-row-hover: var(--row-hover);
+  --color-ink-primary: var(--ink-primary);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-tertiary: var(--ink-tertiary);
+
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-magenta: var(--brand-magenta);
+  --color-brand-purple: var(--brand-purple);
+
+  --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-ink: var(--success-ink);
+  --color-success-soft: var(--success-soft);
+  --color-info: var(--info);
+  --color-info-ink: var(--info-ink);
+  --color-info-soft: var(--info-soft);
+  --color-warning: var(--warning);
+  --color-warning-ink: var(--warning-ink);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-ink: var(--danger-ink);
+  --color-danger-soft: var(--danger-soft);
+
+  --radius-lg: var(--radius-lg);
+  --radius-sm: var(--radius-sm);
+  --font-sans: var(--font-sans);
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink-primary);
+  font-family: var(--font-sans), sans-serif;
+}
+
+/* TV whiteboard: same palette, bigger everything. Applied on the /tv route's
+   wrapper — a density variant, not a second theme. */
+.theme-tv {
+  font-size: 1.35rem;
+}
