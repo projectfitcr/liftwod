@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { formatScore } from "@/lib/format";
@@ -61,6 +62,7 @@ export function WhiteboardBoard({
                   >
                     {i + 1}
                   </span>
+                  <Avatar url={r.avatarUrl} name={r.memberName} size={tv ? "md" : "sm"} />
                   <span
                     className={`min-w-0 flex-1 break-words font-medium ${
                       tv ? "text-3xl" : "text-sm"

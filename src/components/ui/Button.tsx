@@ -16,12 +16,17 @@ const styles: Record<Variant, string> = {
 
 export function Button({
   variant = "primary",
+  size = "md",
   className = "",
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: Variant;
+  size?: "sm" | "md";
+}) {
+  const sizing = size === "sm" ? "px-2.5 py-1 text-xs" : "px-4 py-2 text-sm";
   return (
     <button
-      className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-sm transition-colors disabled:cursor-not-allowed ${styles[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-lg transition-colors disabled:cursor-not-allowed ${sizing} ${styles[variant]} ${className}`}
       {...props}
     />
   );

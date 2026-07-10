@@ -9,7 +9,7 @@ export default async function CoachMembersPage() {
   const [{ data: people }, { data: lastAttendance }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, full_name, nickname, email, role")
+      .select("id, full_name, nickname, email, role, avatar_url")
       .not("approved_at", "is", null)
       .eq("is_active", true)
       .order("full_name"),
@@ -29,6 +29,7 @@ export default async function CoachMembersPage() {
     id: p.id,
     name: p.nickname || p.full_name || p.email || "—",
     role: p.role,
+    avatarUrl: p.avatar_url,
     lastAttended: last.get(p.id) ?? null,
   }));
 

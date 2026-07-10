@@ -324,5 +324,8 @@
   "admin.users.makeAdmin": "ตั้งเป็นแอดมิน",
   "admin.users.makeAdminConfirm": "ตั้ง {name} เป็นแอดมิน? แอดมินจัดการสมาชิกภาพ การชำระเงิน แพ็กเกจ และผู้ใช้ได้ทั้งหมด",
   "admin.users.demoteAdminConfirm": "ถอดสิทธิ์แอดมินของ {name}?",
-  "admin.users.lastAdmin": "ไม่สามารถถอดแอดมินคนสุดท้ายได้"
+  "admin.users.lastAdmin": "ไม่สามารถถอดแอดมินคนสุดท้ายได้",
+  "profile.changePhoto": "เปลี่ยนรูป",
+  "profile.photoUploading": "กำลังอัปโหลด…",
+  "profile.photoError": "อัปโหลดรูปไม่สำเร็จ ลองใช้รูปที่เล็กลง"
 }

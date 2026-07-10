@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { formatDate } from "@/lib/format";
@@ -20,6 +21,7 @@ export function MembersList({
     id: string;
     name: string;
     role: "admin" | "coach" | "member";
+    avatarUrl: string | null;
     lastAttended: string | null;
   }[];
 }) {
@@ -40,7 +42,8 @@ export function MembersList({
                   href={`/coach/members/${r.id}`}
                   className="flex items-center justify-between gap-3 py-2.5 hover:bg-row-hover"
                 >
-                  <div className="min-w-0">
+                  <Avatar url={r.avatarUrl} name={r.name} size="md" />
+                  <div className="min-w-0 flex-1">
                     <p className="break-words text-sm font-medium">
                       {r.name}
                       {r.role !== "member" ? (

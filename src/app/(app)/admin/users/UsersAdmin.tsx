@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
@@ -22,6 +23,7 @@ type ProfileRow = {
   approved_at: string | null;
   is_active: boolean;
   created_at: string;
+  avatar_url: string | null;
 };
 
 type InviteRow = {
@@ -91,17 +93,20 @@ export function UsersAdmin({
           <div className="space-y-2">
             {waiting.map((p) => (
               <Card key={p.id} className="flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="break-words text-sm font-medium">
-                    {p.full_name || p.email}
-                  </p>
-                  <p className="break-words text-xs text-ink-tertiary">
-                    {p.email} ·{" "}
-                    {t("admin.users.joined", {
-                      date: formatDate(language, p.created_at),
-                    })}
-                  </p>
-                </div>
+                <span className="flex min-w-0 items-center gap-2.5">
+                  <Avatar url={p.avatar_url} name={p.full_name || p.email || "?"} size="md" />
+                  <span className="min-w-0">
+                    <p className="break-words text-sm font-medium">
+                      {p.full_name || p.email}
+                    </p>
+                    <p className="break-words text-xs text-ink-tertiary">
+                      {p.email} ·{" "}
+                      {t("admin.users.joined", {
+                        date: formatDate(language, p.created_at),
+                      })}
+                    </p>
+                  </span>
+                </span>
                 <Button
                   disabled={pending}
                   onClick={() => startTransition(() => approveUser(p.id).then(() => {}))}
@@ -141,7 +146,7 @@ export function UsersAdmin({
           ) : (
             <ul className="divide-y divide-hairline">
               {invites.map((inv) => (
-                <li key={inv.token} className="flex items-center justify-between gap-3 py-2">
+                <li key={inv.token} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 py-2">
                   <div className="flex min-w-0 items-center gap-2">
                     <Pill tone={inv.role === "coach" ? "info" : "primary"}>
                       {t(ROLE_KEY[inv.role])}
@@ -153,13 +158,14 @@ export function UsersAdmin({
                     </span>
                   </div>
                   <div className="flex shrink-0 items-center gap-1.5">
-                    <Button variant="secondary" onClick={() => copyInviteLink(inv.token)}>
+                    <Button variant="secondary" size="sm" onClick={() => copyInviteLink(inv.token)}>
                       {copied === inv.token
                         ? t("admin.invites.copied")
                         : t("admin.invites.copy")}
                     </Button>
                     <Button
                       variant="ghost"
+                      size="sm"
                       disabled={pending}
                       onClick={() => startTransition(() => deleteInvite(inv.token))}
                     >
@@ -185,29 +191,33 @@ export function UsersAdmin({
         <Card>
           <ul className="divide-y divide-hairline">
             {rest.map((p) => (
-              <li key={p.id} className="flex items-center justify-between gap-3 py-2.5">
-                <div className="min-w-0">
-                  <p className="break-words text-sm font-medium">
-                    {p.full_name || p.email}
+              <li key={p.id} className="py-2.5">
+                <div className="flex items-center gap-2.5">
+                  <Avatar url={p.avatar_url} name={p.full_name || p.email || "?"} size="md" />
+                  <div className="min-w-0 flex-1">
+                    <p className="break-words text-sm font-medium">
+                      {p.full_name || p.email}
+                    </p>
+                    <p className="break-words text-xs text-ink-tertiary">{p.email}</p>
+                  </div>
+                  <span className="flex shrink-0 items-center gap-1.5">
                     {!p.is_active ? (
-                      <span className="ml-2 align-middle">
-                        <Pill tone="danger">{t("admin.users.inactive")}</Pill>
-                      </span>
+                      <Pill tone="danger">{t("admin.users.inactive")}</Pill>
                     ) : null}
-                  </p>
-                  <p className="break-words text-xs text-ink-tertiary">{p.email}</p>
+                    <Pill
+                      tone={
+                        p.role === "admin" ? "accent" : p.role === "coach" ? "info" : "neutral"
+                      }
+                    >
+                      {t(ROLE_KEY[p.role])}
+                    </Pill>
+                  </span>
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  <Pill
-                    tone={
-                      p.role === "admin" ? "accent" : p.role === "coach" ? "info" : "neutral"
-                    }
-                  >
-                    {t(ROLE_KEY[p.role])}
-                  </Pill>
+                <div className="mt-1.5 flex flex-wrap items-center gap-1.5 pl-[50px]">
                   {p.role !== "admin" ? (
                     <Button
-                      variant="ghost"
+                      variant="secondary"
+                      size="sm"
                       disabled={pending}
                       onClick={() => changeRole(p, "admin")}
                     >
@@ -216,7 +226,8 @@ export function UsersAdmin({
                   ) : null}
                   {p.role !== "coach" ? (
                     <Button
-                      variant="ghost"
+                      variant="secondary"
+                      size="sm"
                       disabled={pending}
                       onClick={() => changeRole(p, "coach")}
                     >
@@ -225,7 +236,8 @@ export function UsersAdmin({
                   ) : null}
                   {p.role !== "member" ? (
                     <Button
-                      variant="ghost"
+                      variant="secondary"
+                      size="sm"
                       disabled={pending}
                       onClick={() => changeRole(p, "member")}
                     >
@@ -235,6 +247,7 @@ export function UsersAdmin({
                   {p.role !== "admin" ? (
                     <Button
                       variant="ghost"
+                      size="sm"
                       disabled={pending}
                       onClick={() =>
                         startTransition(() =>

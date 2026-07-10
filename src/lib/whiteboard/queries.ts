@@ -9,6 +9,7 @@ type ComponentKind = Database["public"]["Enums"]["component_kind"];
 export type BoardRow = {
   memberId: string;
   memberName: string;
+  avatarUrl: string | null;
   isRx: boolean;
   isPr: boolean;
   openGym: boolean;
@@ -75,12 +76,13 @@ export async function getBoard(date: string): Promise<Board | null> {
         "component_id, member_id, session_id, is_rx, is_pr, comment, time_seconds, rounds, reps, load_kg, distance_m, calories"
       )
       .in("component_id", ids),
-    supabase.from("member_directory").select("id, full_name, nickname"),
+    supabase.from("member_directory").select("id, full_name, nickname, avatar_url"),
   ]);
 
   const names = new Map(
     (directory ?? []).map((d) => [d.id, d.nickname || d.full_name || "—"])
   );
+  const avatars = new Map((directory ?? []).map((d) => [d.id, d.avatar_url]));
 
   const components: BoardComponent[] = scored.map((c) => {
     const rows: BoardRow[] = (results ?? [])
@@ -88,6 +90,7 @@ export async function getBoard(date: string): Promise<Board | null> {
       .map((r) => ({
         memberId: r.member_id,
         memberName: names.get(r.member_id) ?? "—",
+        avatarUrl: avatars.get(r.member_id) ?? null,
         isRx: r.is_rx,
         isPr: r.is_pr,
         openGym: r.session_id == null,

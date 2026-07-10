@@ -324,5 +324,8 @@
   "admin.users.makeAdmin": "Make admin",
   "admin.users.makeAdminConfirm": "Make {name} an admin? Admins manage memberships, payments, plans, and users.",
   "admin.users.demoteAdminConfirm": "Remove admin rights from {name}?",
-  "admin.users.lastAdmin": "You can't remove the last admin."
+  "admin.users.lastAdmin": "You can't remove the last admin.",
+  "profile.changePhoto": "Change photo",
+  "profile.photoUploading": "Uploading…",
+  "profile.photoError": "Couldn't upload the photo. Try a smaller image."
 }

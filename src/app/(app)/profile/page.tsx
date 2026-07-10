@@ -36,8 +36,10 @@ export default async function ProfilePage() {
 
   return (
     <ProfileView
+      userId={profile.id}
       fullName={profile.full_name}
       email={profile.email ?? ""}
+      avatarUrl={profile.avatar_url}
       summary={summary}
     />
   );

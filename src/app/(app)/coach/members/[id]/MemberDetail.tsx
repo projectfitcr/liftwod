@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -19,7 +20,7 @@ export function MemberDetail({
   notes,
   isAdmin,
 }: {
-  member: { id: string; name: string; email: string | null };
+  member: { id: string; name: string; email: string | null; avatarUrl: string | null };
   summary: MembershipSummary | null;
   attendance: {
     id: string;
@@ -40,10 +41,15 @@ export function MemberDetail({
         <Link href="/coach/members" className="text-xs text-ink-tertiary hover:underline">
           ← {t("coach.members.title")}
         </Link>
-        <h1 className="mt-1 break-words text-xl font-semibold">{member.name}</h1>
-        {member.email ? (
-          <p className="break-words text-xs text-ink-tertiary">{member.email}</p>
-        ) : null}
+        <div className="mt-1 flex items-center gap-3">
+          <Avatar url={member.avatarUrl} name={member.name} size="lg" />
+          <div className="min-w-0">
+            <h1 className="break-words text-xl font-semibold">{member.name}</h1>
+            {member.email ? (
+              <p className="break-words text-xs text-ink-tertiary">{member.email}</p>
+            ) : null}
+          </div>
+        </div>
       </div>
 
       <MembershipStatusCard summary={summary} />

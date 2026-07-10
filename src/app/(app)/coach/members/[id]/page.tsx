@@ -15,7 +15,7 @@ export default async function CoachMemberPage({
 
   const { data: member } = await supabase
     .from("profiles")
-    .select("id, full_name, nickname, email, phone")
+    .select("id, full_name, nickname, email, phone, avatar_url")
     .eq("id", id)
     .single();
   if (!member) notFound();
@@ -47,6 +47,7 @@ export default async function CoachMemberPage({
         id: member.id,
         name: member.nickname || member.full_name || member.email || "—",
         email: member.email,
+        avatarUrl: member.avatar_url,
       }}
       summary={summary}
       attendance={(attendance ?? []).map((a) => ({

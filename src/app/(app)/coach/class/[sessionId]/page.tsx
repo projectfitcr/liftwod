@@ -34,7 +34,7 @@ export default async function CoachClassPage({
         .eq("session_id", sessionId),
       supabase
         .from("profiles")
-        .select("id, full_name, nickname, email")
+        .select("id, full_name, nickname, email, avatar_url")
         .not("approved_at", "is", null)
         .eq("is_active", true)
         .order("full_name"),
@@ -43,12 +43,14 @@ export default async function CoachClassPage({
   const names = new Map(
     (people ?? []).map((p) => [p.id, p.nickname || p.full_name || p.email || "—"])
   );
+  const avatars = new Map((people ?? []).map((p) => [p.id, p.avatar_url]));
   const attByMember = new Map((attendance ?? []).map((a) => [a.member_id, a]));
 
   const roster = (bookings ?? []).map((b) => ({
     bookingId: b.id,
     memberId: b.member_id,
     name: names.get(b.member_id) ?? "—",
+    avatarUrl: avatars.get(b.member_id) ?? null,
     status: b.status as "booked" | "waitlisted",
     attendanceId: attByMember.get(b.member_id)?.id ?? null,
   }));
@@ -60,6 +62,7 @@ export default async function CoachClassPage({
     .map((a) => ({
       memberId: a.member_id,
       name: names.get(a.member_id) ?? "—",
+      avatarUrl: avatars.get(a.member_id) ?? null,
       attendanceId: a.id,
     }));
 

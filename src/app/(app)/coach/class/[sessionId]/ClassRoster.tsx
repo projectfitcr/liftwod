@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { formatClockTime, formatDate } from "@/lib/format";
 import { checkIn, undoCheckIn } from "@/lib/attendance/actions";
+import { Avatar } from "@/components/ui/Avatar";
 import { bookingMessage } from "@/components/schedule/ClassCard";
 import {
   ScoreDrawer,
@@ -24,6 +25,7 @@ type RosterRow = {
   bookingId: string;
   memberId: string;
   name: string;
+  avatarUrl: string | null;
   status: "booked" | "waitlisted";
   attendanceId: string | null;
 };
@@ -51,7 +53,12 @@ export function ClassRoster({
     capacity: number;
   };
   roster: RosterRow[];
-  walkIns: { memberId: string; name: string; attendanceId: string }[];
+  walkIns: {
+    memberId: string;
+    name: string;
+    avatarUrl: string | null;
+    attendanceId: string;
+  }[];
   addable: { id: string; name: string }[];
   scorableComponents: {
     id: string;
@@ -132,7 +139,10 @@ export function ClassRoster({
             <ul className="divide-y divide-hairline">
               {booked.map((r) => (
                 <li key={r.bookingId} className="flex items-center justify-between gap-3 py-2.5">
-                  <p className="min-w-0 break-words text-sm font-medium">{r.name}</p>
+                  <span className="flex min-w-0 items-center gap-2.5">
+                    <Avatar url={r.avatarUrl} name={r.name} size="md" />
+                    <p className="min-w-0 break-words text-sm font-medium">{r.name}</p>
+                  </span>
                   <div className="flex shrink-0 items-center gap-2">
                     {drawerComponents.length > 0 && r.attendanceId ? (
                       <Button
@@ -171,12 +181,15 @@ export function ClassRoster({
               ))}
               {walkIns.map((w) => (
                 <li key={w.attendanceId} className="flex items-center justify-between gap-3 py-2.5">
-                  <p className="min-w-0 break-words text-sm font-medium">
-                    {w.name}{" "}
-                    <span className="text-xs text-ink-tertiary">
-                      · {t("coach.class.walkIn")}
-                    </span>
-                  </p>
+                  <span className="flex min-w-0 items-center gap-2.5">
+                    <Avatar url={w.avatarUrl} name={w.name} size="md" />
+                    <p className="min-w-0 break-words text-sm font-medium">
+                      {w.name}{" "}
+                      <span className="text-xs text-ink-tertiary">
+                        · {t("coach.class.walkIn")}
+                      </span>
+                    </p>
+                  </span>
                   <div className="flex shrink-0 items-center gap-2">
                     {drawerComponents.length > 0 ? (
                       <Button
@@ -202,7 +215,10 @@ export function ClassRoster({
               ))}
               {waitlisted.map((r) => (
                 <li key={r.bookingId} className="flex items-center justify-between gap-3 py-2.5 opacity-75">
-                  <p className="min-w-0 break-words text-sm">{r.name}</p>
+                  <span className="flex min-w-0 items-center gap-2.5">
+                    <Avatar url={r.avatarUrl} name={r.name} size="md" />
+                    <p className="min-w-0 break-words text-sm">{r.name}</p>
+                  </span>
                   <div className="flex shrink-0 items-center gap-2">
                     <Pill tone="info">{t("booking.waitlistedPill")}</Pill>
                     {!r.attendanceId ? (
