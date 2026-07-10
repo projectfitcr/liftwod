@@ -48,9 +48,25 @@ export function UsersAdmin({
   const { t, language } = useLanguage();
   const [pending, startTransition] = useTransition();
   const [copied, setCopied] = useState<string | null>(null);
+  const [roleError, setRoleError] = useState(false);
 
   const waiting = profiles.filter((p) => !p.approved_at && p.is_active);
   const rest = profiles.filter((p) => p.approved_at || !p.is_active);
+
+  function changeRole(p: ProfileRow, role: "member" | "coach" | "admin") {
+    if (role === "admin") {
+      if (!window.confirm(t("admin.users.makeAdminConfirm", { name: p.full_name || p.email || "" })))
+        return;
+    } else if (p.role === "admin") {
+      if (!window.confirm(t("admin.users.demoteAdminConfirm", { name: p.full_name || p.email || "" })))
+        return;
+    }
+    setRoleError(false);
+    startTransition(async () => {
+      const res = await setUserRole(p.id, role);
+      if (!res.ok && res.code === "LAST_ADMIN") setRoleError(true);
+    });
+  }
 
   function copyInviteLink(token: string) {
     const url = `${window.location.origin}/sign-up?invite=${token}`;
@@ -161,6 +177,11 @@ export function UsersAdmin({
         <h2 className="mb-2 text-sm font-medium text-ink-secondary">
           {t("admin.users.everyone")}
         </h2>
+        {roleError ? (
+          <p className="mb-2 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger-ink">
+            {t("admin.users.lastAdmin")}
+          </p>
+        ) : null}
         <Card>
           <ul className="divide-y divide-hairline">
             {rest.map((p) => (
@@ -185,37 +206,46 @@ export function UsersAdmin({
                     {t(ROLE_KEY[p.role])}
                   </Pill>
                   {p.role !== "admin" ? (
-                    <>
-                      <Button
-                        variant="ghost"
-                        disabled={pending}
-                        onClick={() =>
-                          startTransition(() =>
-                            setUserRole(
-                              p.id,
-                              p.role === "coach" ? "member" : "coach"
-                            ).then(() => {})
-                          )
-                        }
-                      >
-                        {p.role === "coach"
-                          ? t("admin.users.makeMember")
-                          : t("admin.users.makeCoach")}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        disabled={pending}
-                        onClick={() =>
-                          startTransition(() =>
-                            setUserActive(p.id, !p.is_active).then(() => {})
-                          )
-                        }
-                      >
-                        {p.is_active
-                          ? t("admin.users.deactivate")
-                          : t("admin.users.reactivate")}
-                      </Button>
-                    </>
+                    <Button
+                      variant="ghost"
+                      disabled={pending}
+                      onClick={() => changeRole(p, "admin")}
+                    >
+                      {t("admin.users.makeAdmin")}
+                    </Button>
+                  ) : null}
+                  {p.role !== "coach" ? (
+                    <Button
+                      variant="ghost"
+                      disabled={pending}
+                      onClick={() => changeRole(p, "coach")}
+                    >
+                      {t("admin.users.makeCoach")}
+                    </Button>
+                  ) : null}
+                  {p.role !== "member" ? (
+                    <Button
+                      variant="ghost"
+                      disabled={pending}
+                      onClick={() => changeRole(p, "member")}
+                    >
+                      {t("admin.users.makeMember")}
+                    </Button>
+                  ) : null}
+                  {p.role !== "admin" ? (
+                    <Button
+                      variant="ghost"
+                      disabled={pending}
+                      onClick={() =>
+                        startTransition(() =>
+                          setUserActive(p.id, !p.is_active).then(() => {})
+                        )
+                      }
+                    >
+                      {p.is_active
+                        ? t("admin.users.deactivate")
+                        : t("admin.users.reactivate")}
+                    </Button>
                   ) : null}
                 </div>
               </li>

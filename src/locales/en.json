@@ -320,5 +320,9 @@
   "booking.code.NOT_FOUND": "Not found.",
   "common.previous": "Previous",
   "common.next": "Next",
-  "common.close": "Close"
+  "common.close": "Close",
+  "admin.users.makeAdmin": "Make admin",
+  "admin.users.makeAdminConfirm": "Make {name} an admin? Admins manage memberships, payments, plans, and users.",
+  "admin.users.demoteAdminConfirm": "Remove admin rights from {name}?",
+  "admin.users.lastAdmin": "You can't remove the last admin."
 }

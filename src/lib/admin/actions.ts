@@ -18,7 +18,10 @@ export async function approveUser(userId: string) {
   return { ok: !error };
 }
 
-export async function setUserRole(userId: string, role: "member" | "coach") {
+export async function setUserRole(
+  userId: string,
+  role: "member" | "coach" | "admin"
+) {
   await requireAdmin();
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
@@ -26,7 +29,10 @@ export async function setUserRole(userId: string, role: "member" | "coach") {
     .update({ role })
     .eq("id", userId);
   revalidatePath("/admin/users");
-  return { ok: !error };
+  return {
+    ok: !error,
+    code: error?.message.includes("LAST_ADMIN") ? "LAST_ADMIN" : undefined,
+  };
 }
 
 export async function setUserActive(userId: string, isActive: boolean) {
@@ -37,7 +43,10 @@ export async function setUserActive(userId: string, isActive: boolean) {
     .update({ is_active: isActive })
     .eq("id", userId);
   revalidatePath("/admin/users");
-  return { ok: !error };
+  return {
+    ok: !error,
+    code: error?.message.includes("LAST_ADMIN") ? "LAST_ADMIN" : undefined,
+  };
 }
 
 export async function createInvite(role: "member" | "coach") {

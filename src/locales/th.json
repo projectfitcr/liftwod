@@ -320,5 +320,9 @@
   "booking.code.NOT_FOUND": "ไม่พบรายการ",
   "common.previous": "ก่อนหน้า",
   "common.next": "ถัดไป",
-  "common.close": "ปิด"
+  "common.close": "ปิด",
+  "admin.users.makeAdmin": "ตั้งเป็นแอดมิน",
+  "admin.users.makeAdminConfirm": "ตั้ง {name} เป็นแอดมิน? แอดมินจัดการสมาชิกภาพ การชำระเงิน แพ็กเกจ และผู้ใช้ได้ทั้งหมด",
+  "admin.users.demoteAdminConfirm": "ถอดสิทธิ์แอดมินของ {name}?",
+  "admin.users.lastAdmin": "ไม่สามารถถอดแอดมินคนสุดท้ายได้"
 }
