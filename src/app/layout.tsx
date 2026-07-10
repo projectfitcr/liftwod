@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans_Thai_Looped } from "next/font/google";
+import { RegisterSW } from "@/components/pwa/RegisterSW";
 import "./globals.css";
 
 const plexThaiLooped = IBM_Plex_Sans_Thai_Looped({
@@ -24,7 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" className={`${plexThaiLooped.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <RegisterSW />
+      </body>
     </html>
   );
 }
