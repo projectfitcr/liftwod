@@ -21,6 +21,7 @@ export default async function SchedulePage({
       today={today}
       days={days}
       currentWeekStart={weekStartOf(today)}
+      isStaff={profile.role === "admin" || profile.role === "coach"}
     />
   );
 }

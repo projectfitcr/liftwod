@@ -28,6 +28,7 @@ export default async function TodayPage() {
       sessions={days[0]?.sessions ?? []}
       membershipStatus={summary?.status ?? null}
       hasMembership={summary != null}
+      isStaff={profile.role === "admin" || profile.role === "coach"}
       promotions={(promotions ?? [])
         .filter((p) => p.class_sessions)
         .map((p) => ({ id: p.id, sessionName: p.class_sessions!.name }))}

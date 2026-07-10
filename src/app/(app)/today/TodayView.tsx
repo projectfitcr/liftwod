@@ -11,12 +11,14 @@ export function TodayView({
   sessions,
   membershipStatus,
   hasMembership,
+  isStaff,
   promotions,
 }: {
   name: string;
   sessions: SessionView[];
   membershipStatus: MembershipStatus | null;
   hasMembership: boolean;
+  isStaff: boolean;
   promotions: { id: string; sessionName: string }[];
 }) {
   const { t } = useLanguage();
@@ -56,7 +58,7 @@ export function TodayView({
       ) : (
         <div className="space-y-2">
           {sessions.map((s) => (
-            <ClassCard key={s.id} session={s} />
+            <ClassCard key={s.id} session={s} staffLink={isStaff} />
           ))}
         </div>
       )}

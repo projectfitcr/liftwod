@@ -16,7 +16,12 @@ export const MEMBER_NAV: NavItem[] = [
   { href: "/profile", labelKey: "nav.profile", icon: "profile" },
 ];
 
-/** Extra TopBar links by role (sidebar arrives with the coach/admin builds). */
+/** TopBar links for coach AND admin. */
+export const STAFF_NAV: NavItem[] = [
+  { href: "/coach/members", labelKey: "nav.members", icon: "users" },
+];
+
+/** Extra TopBar links, admin only. */
 export const ADMIN_NAV: NavItem[] = [
   { href: "/admin/schedule", labelKey: "nav.schedule", icon: "schedule" },
   { href: "/admin/memberships", labelKey: "nav.memberships", icon: "memberships" },

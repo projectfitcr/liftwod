@@ -5,11 +5,15 @@ import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 import { Wordmark } from "@/components/shell/Wordmark";
 import { Icon } from "@/components/shell/Icon";
-import { ADMIN_NAV } from "@/components/shell/nav";
+import { ADMIN_NAV, STAFF_NAV } from "@/components/shell/nav";
 import { signOut } from "@/lib/auth/actions";
 
 export function TopBar({ role }: { role: "admin" | "coach" | "member" }) {
   const { t } = useLanguage();
+  const links = [
+    ...(role === "admin" || role === "coach" ? STAFF_NAV : []),
+    ...(role === "admin" ? ADMIN_NAV : []),
+  ];
 
   return (
     <header className="sticky top-0 z-20 border-b border-hairline bg-canvas/90 backdrop-blur">
@@ -18,18 +22,16 @@ export function TopBar({ role }: { role: "admin" | "coach" | "member" }) {
           <Wordmark />
         </Link>
         <div className="flex items-center gap-2">
-          {role === "admin"
-            ? ADMIN_NAV.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-ink-secondary hover:bg-row-hover hover:text-ink-primary"
-                >
-                  <Icon name={item.icon} className="h-4 w-4" />
-                  <span className="hidden sm:inline">{t(item.labelKey)}</span>
-                </Link>
-              ))
-            : null}
+          {links.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-ink-secondary hover:bg-row-hover hover:text-ink-primary"
+            >
+              <Icon name={item.icon} className="h-4 w-4" />
+              <span className="hidden lg:inline">{t(item.labelKey)}</span>
+            </Link>
+          ))}
           <LanguageToggle />
           <form action={signOut}>
             <button

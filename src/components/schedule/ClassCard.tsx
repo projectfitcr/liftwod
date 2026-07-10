@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import { formatClockTime, formatDate } from "@/lib/format";
 import { bookClass, cancelBooking, type BookingResult } from "@/lib/bookings/actions";
+import { checkIn } from "@/lib/attendance/actions";
 import type { Language, LocaleKey } from "@/lib/i18n";
 
 export type SessionView = {
@@ -20,6 +22,7 @@ export type SessionView = {
   booked: number;
   waiting: number;
   myBooking: { id: string; status: "booked" | "waitlisted" } | null;
+  checkedIn: boolean;
 };
 
 export function bookingMessage(
@@ -36,20 +39,41 @@ export function bookingMessage(
   });
 }
 
-export function ClassCard({ session }: { session: SessionView }) {
+export function ClassCard({
+  session,
+  staffLink = false,
+}: {
+  session: SessionView;
+  staffLink?: boolean;
+}) {
   const { t, language } = useLanguage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [message, setMessage] = useState<{ text: string; ok: boolean } | null>(null);
+  const [message, setMessage] = useState<{
+    text: string;
+    ok: boolean;
+    visitsLeft?: number;
+  } | null>(null);
 
-  const past = new Date(session.starts_at).getTime() <= Date.now();
+  const now = Date.now();
+  const past = new Date(session.starts_at).getTime() <= now;
   const cancelled = session.status === "cancelled";
   const full = session.booked >= session.capacity;
+  // Self check-in window mirrors the RPC gate: 60 min before start → end.
+  const inCheckinWindow =
+    now >= new Date(session.starts_at).getTime() - 60 * 60 * 1000 &&
+    now <= new Date(session.ends_at).getTime();
 
   function run(action: () => Promise<BookingResult>) {
     startTransition(async () => {
       const res = await action();
-      setMessage({ text: bookingMessage(t, language, res), ok: res.ok });
+      const visits = (res.meta as { visits_remaining?: number } | undefined)
+        ?.visits_remaining;
+      setMessage({
+        text: bookingMessage(t, language, res),
+        ok: res.ok,
+        visitsLeft: typeof visits === "number" ? visits : undefined,
+      });
       router.refresh();
     });
   }
@@ -94,7 +118,19 @@ export function ClassCard({ session }: { session: SessionView }) {
                   : ""}
               </span>
 
-              {session.myBooking ? (
+              {session.checkedIn ? (
+                <Pill tone="success">{t("checkin.done")}</Pill>
+              ) : inCheckinWindow ? (
+                <Button
+                  variant="primary"
+                  disabled={pending}
+                  onClick={() => run(() => checkIn(session.id))}
+                >
+                  {t("checkin.self")}
+                </Button>
+              ) : null}
+
+              {!session.checkedIn && session.myBooking ? (
                 <>
                   <Pill tone={session.myBooking.status === "booked" ? "success" : "info"}>
                     {session.myBooking.status === "booked"
@@ -111,7 +147,7 @@ export function ClassCard({ session }: { session: SessionView }) {
                     </Button>
                   ) : null}
                 </>
-              ) : !past ? (
+              ) : !session.checkedIn && !session.myBooking && !past ? (
                 <Button
                   variant={full ? "secondary" : "primary"}
                   disabled={pending}
@@ -132,7 +168,19 @@ export function ClassCard({ session }: { session: SessionView }) {
           }`}
         >
           {message.text}
+          {message.ok && typeof message.visitsLeft === "number"
+            ? ` ${t("checkin.visitsLeft", { count: message.visitsLeft })}`
+            : ""}
         </p>
+      ) : null}
+
+      {staffLink && !cancelled ? (
+        <Link
+          href={`/coach/class/${session.id}`}
+          className="mt-2 inline-block text-xs font-medium text-primary-ink hover:underline"
+        >
+          {t("coach.runClass")}
+        </Link>
       ) : null}
     </div>
   );

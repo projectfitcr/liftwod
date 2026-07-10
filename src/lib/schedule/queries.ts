@@ -24,7 +24,7 @@ export async function getSessionViews(
   const ids = sessions.map((s) => s.id);
   const coachIds = [...new Set(sessions.map((s) => s.coach_id).filter(Boolean))] as string[];
 
-  const [{ data: availability }, { data: myBookings }, { data: coaches }] =
+  const [{ data: availability }, { data: myBookings }, { data: coaches }, { data: myAttendance }] =
     await Promise.all([
       supabase.from("session_availability").select("*").in("session_id", ids),
       supabase
@@ -36,10 +36,16 @@ export async function getSessionViews(
       coachIds.length
         ? supabase.from("member_directory").select("id, full_name, nickname").in("id", coachIds)
         : Promise.resolve({ data: [] as { id: string | null; full_name: string | null; nickname: string | null }[] }),
+      supabase
+        .from("attendance")
+        .select("session_id")
+        .eq("member_id", userId)
+        .in("session_id", ids),
     ]);
 
   const avail = new Map((availability ?? []).map((a) => [a.session_id, a]));
   const mine = new Map((myBookings ?? []).map((b) => [b.session_id, b]));
+  const attended = new Set((myAttendance ?? []).map((a) => a.session_id));
   const coachName = new Map(
     (coaches ?? []).map((c) => [c.id, c.nickname || c.full_name || null])
   );
@@ -62,6 +68,7 @@ export async function getSessionViews(
         b && (b.status === "booked" || b.status === "waitlisted")
           ? { id: b.id, status: b.status }
           : null,
+      checkedIn: attended.has(s.id),
     };
     const list = byDate.get(s.session_date) ?? [];
     list.push(view);

@@ -13,11 +13,13 @@ export function WeekSchedule({
   today,
   days,
   currentWeekStart,
+  isStaff,
 }: {
   weekStart: string;
   today: string;
   days: DaySessions[];
   currentWeekStart: string;
+  isStaff: boolean;
 }) {
   const { t, language } = useLanguage();
   const byDate = new Map(days.map((d) => [d.date, d.sessions]));
@@ -71,7 +73,7 @@ export function WeekSchedule({
               ) : (
                 <div className="space-y-2">
                   {sessions.map((s) => (
-                    <ClassCard key={s.id} session={s} />
+                    <ClassCard key={s.id} session={s} staffLink={isStaff} />
                   ))}
                 </div>
               )}
