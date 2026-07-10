@@ -3,7 +3,11 @@
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Card } from "@/components/ui/Card";
 import { ClassCard, type SessionView } from "@/components/schedule/ClassCard";
-import { WodCard, type WodView } from "@/components/wod/WodCard";
+import { type WodView } from "@/components/wod/WodCard";
+import {
+  WodWithLogging,
+  type MyResultsByComponent,
+} from "@/components/wod/WodWithLogging";
 import type { MembershipStatus } from "@/components/membership/helpers";
 import type { LocaleKey } from "@/lib/i18n";
 
@@ -13,6 +17,8 @@ export function TodayView({
   membershipStatus,
   hasMembership,
   isStaff,
+  today,
+  myResults,
   wod,
   wodHidden,
   promotions,
@@ -22,6 +28,8 @@ export function TodayView({
   membershipStatus: MembershipStatus | null;
   hasMembership: boolean;
   isStaff: boolean;
+  today: string;
+  myResults: MyResultsByComponent;
   wod: WodView | null;
   wodHidden: boolean;
   promotions: { id: string; sessionName: string }[];
@@ -56,7 +64,15 @@ export function TodayView({
         </p>
       ) : null}
 
-      {wod ? <WodCard wod={wod} hidden={wodHidden} /> : null}
+      {wod ? (
+        <WodWithLogging
+          wod={wod}
+          hidden={wodHidden}
+          date={today}
+          canLog
+          myResults={myResults}
+        />
+      ) : null}
 
       {sessions.length === 0 ? (
         <Card>

@@ -2,16 +2,22 @@
 
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Card } from "@/components/ui/Card";
-import { WodCard, type WodView } from "@/components/wod/WodCard";
+import { type WodView } from "@/components/wod/WodCard";
+import {
+  WodWithLogging,
+  type MyResultsByComponent,
+} from "@/components/wod/WodWithLogging";
 import { formatDate } from "@/lib/format";
 
 export function WodDay({
   date,
   wod,
+  myResults,
   hidden,
 }: {
   date: string;
   wod: WodView | null;
+  myResults: MyResultsByComponent;
   hidden: boolean;
 }) {
   const { t, language } = useLanguage();
@@ -25,7 +31,13 @@ export function WodDay({
         </span>
       </h1>
       {wod ? (
-        <WodCard wod={wod} hidden={hidden} />
+        <WodWithLogging
+          wod={wod}
+          hidden={hidden}
+          date={date}
+          canLog
+          myResults={myResults}
+        />
       ) : (
         <Card>
           <p className="text-sm text-ink-tertiary">{t("wod.none")}</p>

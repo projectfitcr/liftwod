@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { requireStaff } from "@/lib/auth/guards";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getWodForDate } from "@/lib/wods/queries";
 import { ClassRoster } from "./ClassRoster";
 
 export default async function CoachClassPage({
@@ -67,6 +68,21 @@ export default async function CoachClassPage({
     .filter((p) => !rosterIds.has(p.id))
     .map((p) => ({ id: p.id, name: names.get(p.id) ?? "—" }));
 
+  // The day's WOD (staff see hidden ones) for on-behalf score entry.
+  const wod = await getWodForDate(session.session_date);
+  const scorableComponents = (wod?.components ?? [])
+    .filter((c) => c.scoreType !== "none")
+    .map((c) => ({ id: c.id, scoreType: c.scoreType, kind: c.kind, title: c.title }));
+  const componentIds = scorableComponents.map((c) => c.id);
+  const { data: dayResults } = componentIds.length
+    ? await supabase
+        .from("results")
+        .select(
+          "component_id, member_id, is_rx, is_pr, comment, time_seconds, rounds, reps, load_kg, distance_m, calories"
+        )
+        .in("component_id", componentIds)
+    : { data: [] };
+
   return (
     <ClassRoster
       session={{
@@ -80,6 +96,12 @@ export default async function CoachClassPage({
       roster={roster}
       walkIns={walkIns}
       addable={addable}
+      scorableComponents={scorableComponents}
+      dayResults={(dayResults ?? []).map((r) => ({
+        ...r,
+        load_kg: r.load_kg != null ? Number(r.load_kg) : null,
+        distance_m: r.distance_m != null ? Number(r.distance_m) : null,
+      }))}
     />
   );
 }

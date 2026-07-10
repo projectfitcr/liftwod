@@ -50,6 +50,44 @@ export async function getWodForDate(date: string): Promise<WodView | null> {
   };
 }
 
+export type MyResultRow = {
+  is_rx: boolean;
+  is_pr: boolean;
+  comment: string | null;
+  time_seconds: number | null;
+  rounds: number | null;
+  reps: number | null;
+  load_kg: number | null;
+  distance_m: number | null;
+  calories: number | null;
+};
+
+/** The viewer's results for a set of components, keyed by component id. */
+export async function getMyResults(
+  componentIds: string[],
+  memberId: string
+): Promise<Partial<Record<string, MyResultRow>>> {
+  if (componentIds.length === 0) return {};
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("results")
+    .select(
+      "component_id, is_rx, is_pr, comment, time_seconds, rounds, reps, load_kg, distance_m, calories"
+    )
+    .eq("member_id", memberId)
+    .in("component_id", componentIds);
+
+  const map: Partial<Record<string, MyResultRow>> = {};
+  for (const r of data ?? []) {
+    map[r.component_id] = {
+      ...r,
+      load_kg: r.load_kg != null ? Number(r.load_kg) : null,
+      distance_m: r.distance_m != null ? Number(r.distance_m) : null,
+    };
+  }
+  return map;
+}
+
 export function isHiddenFromMembers(wod: WodView): boolean {
   return (
     !wod.published ||

@@ -2,7 +2,7 @@ import { requireUser } from "@/lib/auth/guards";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getSessionViews } from "@/lib/schedule/queries";
 import { getCurrentMembershipSummary } from "@/lib/memberships/queries";
-import { getWodForDate, isHiddenFromMembers } from "@/lib/wods/queries";
+import { getMyResults, getWodForDate, isHiddenFromMembers } from "@/lib/wods/queries";
 import { bangkokToday } from "@/lib/dates";
 import { TodayView } from "./TodayView";
 
@@ -25,6 +25,13 @@ export default async function TodayPage() {
       .gt("class_sessions.starts_at", new Date().toISOString()),
   ]);
 
+  const myResults = wod
+    ? await getMyResults(
+        wod.components.map((c) => c.id),
+        profile.id
+      )
+    : {};
+
   return (
     <TodayView
       name={profile.nickname || profile.full_name}
@@ -32,6 +39,8 @@ export default async function TodayPage() {
       membershipStatus={summary?.status ?? null}
       hasMembership={summary != null}
       isStaff={isStaff}
+      today={today}
+      myResults={myResults}
       wod={wod}
       wodHidden={isStaff && wod ? isHiddenFromMembers(wod) : false}
       promotions={(promotions ?? [])

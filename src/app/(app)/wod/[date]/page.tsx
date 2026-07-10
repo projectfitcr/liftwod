@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth/guards";
-import { getWodForDate, isHiddenFromMembers } from "@/lib/wods/queries";
+import { getMyResults, getWodForDate, isHiddenFromMembers } from "@/lib/wods/queries";
 import { WodDay } from "./WodDay";
 
 export default async function WodDatePage({
@@ -14,11 +14,18 @@ export default async function WodDatePage({
 
   const isStaff = profile.role === "admin" || profile.role === "coach";
   const wod = await getWodForDate(date); // RLS hides unrevealed from members
+  const myResults = wod
+    ? await getMyResults(
+        wod.components.map((c) => c.id),
+        profile.id
+      )
+    : {};
 
   return (
     <WodDay
       date={date}
       wod={wod}
+      myResults={myResults}
       hidden={isStaff && wod ? isHiddenFromMembers(wod) : false}
     />
   );

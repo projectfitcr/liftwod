@@ -29,8 +29,17 @@ export type WodView = {
 
 /** Member-facing WOD render. Coach free text is shown exactly as typed
  *  (either language, PRD 6.7); all chrome is translated. `hidden` is only
- *  ever true for staff viewers — RLS keeps it from members entirely. */
-export function WodCard({ wod, hidden = false }: { wod: WodView; hidden?: boolean }) {
+ *  ever true for staff viewers — RLS keeps it from members entirely.
+ *  `renderScoreAction` lets hosts add a log-score affordance per component. */
+export function WodCard({
+  wod,
+  hidden = false,
+  renderScoreAction,
+}: {
+  wod: WodView;
+  hidden?: boolean;
+  renderScoreAction?: (componentId: string) => React.ReactNode;
+}) {
   const { t, language } = useLanguage();
 
   return (
@@ -90,6 +99,9 @@ export function WodCard({ wod, hidden = false }: { wod: WodView; hidden?: boolea
                 )
               )}
             </p>
+          ) : null}
+          {c.scoreType !== "none" && renderScoreAction ? (
+            <div className="mt-2">{renderScoreAction(c.id)}</div>
           ) : null}
         </div>
       ))}

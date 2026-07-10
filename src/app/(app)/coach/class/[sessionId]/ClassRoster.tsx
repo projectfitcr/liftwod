@@ -9,7 +9,16 @@ import { Pill } from "@/components/ui/Pill";
 import { formatClockTime, formatDate } from "@/lib/format";
 import { checkIn, undoCheckIn } from "@/lib/attendance/actions";
 import { bookingMessage } from "@/components/schedule/ClassCard";
+import {
+  ScoreDrawer,
+  type ExistingScore,
+} from "@/components/results/ScoreDrawer";
 import type { BookingResult } from "@/lib/bookings/actions";
+import type { LocaleKey } from "@/lib/i18n";
+import type { Database } from "@/lib/supabase/database.types";
+
+type ScoreType = Database["public"]["Enums"]["score_type"];
+type ComponentKind = Database["public"]["Enums"]["component_kind"];
 
 type RosterRow = {
   bookingId: string;
@@ -19,11 +28,19 @@ type RosterRow = {
   attendanceId: string | null;
 };
 
+type DayResult = ExistingScore & {
+  component_id: string;
+  member_id: string;
+  is_pr: boolean;
+};
+
 export function ClassRoster({
   session,
   roster,
   walkIns,
   addable,
+  scorableComponents,
+  dayResults,
 }: {
   session: {
     id: string;
@@ -36,12 +53,38 @@ export function ClassRoster({
   roster: RosterRow[];
   walkIns: { memberId: string; name: string; attendanceId: string }[];
   addable: { id: string; name: string }[];
+  scorableComponents: {
+    id: string;
+    scoreType: ScoreType;
+    kind: ComponentKind;
+    title: string | null;
+  }[];
+  dayResults: DayResult[];
 }) {
   const { t, language } = useLanguage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
   const [walkInId, setWalkInId] = useState("");
+  const [scoring, setScoring] = useState<{ memberId: string; name: string } | null>(null);
+
+  const drawerComponents = scorableComponents.map((c) => ({
+    id: c.id,
+    scoreType: c.scoreType,
+    label: `${t(`kind.${c.kind}` as LocaleKey)}${c.title ? ` · ${c.title}` : ""}`,
+  }));
+
+  function existingFor(memberId: string): Partial<Record<string, ExistingScore>> {
+    const map: Partial<Record<string, ExistingScore>> = {};
+    for (const r of dayResults.filter((r) => r.member_id === memberId)) {
+      map[r.component_id] = r;
+    }
+    return map;
+  }
+
+  function scoreCount(memberId: string): number {
+    return dayResults.filter((r) => r.member_id === memberId).length;
+  }
 
   function run(action: () => Promise<BookingResult>) {
     startTransition(async () => {
@@ -91,6 +134,17 @@ export function ClassRoster({
                 <li key={r.bookingId} className="flex items-center justify-between gap-3 py-2.5">
                   <p className="min-w-0 break-words text-sm font-medium">{r.name}</p>
                   <div className="flex shrink-0 items-center gap-2">
+                    {drawerComponents.length > 0 && r.attendanceId ? (
+                      <Button
+                        variant="ghost"
+                        disabled={pending}
+                        onClick={() => setScoring({ memberId: r.memberId, name: r.name })}
+                      >
+                        {scoreCount(r.memberId) > 0
+                          ? `${t("scorelog.edit")} (${scoreCount(r.memberId)})`
+                          : t("scorelog.log")}
+                      </Button>
+                    ) : null}
                     {r.attendanceId ? (
                       <>
                         <Pill tone="success">{t("checkin.done")}</Pill>
@@ -124,6 +178,17 @@ export function ClassRoster({
                     </span>
                   </p>
                   <div className="flex shrink-0 items-center gap-2">
+                    {drawerComponents.length > 0 ? (
+                      <Button
+                        variant="ghost"
+                        disabled={pending}
+                        onClick={() => setScoring({ memberId: w.memberId, name: w.name })}
+                      >
+                        {scoreCount(w.memberId) > 0
+                          ? `${t("scorelog.edit")} (${scoreCount(w.memberId)})`
+                          : t("scorelog.log")}
+                      </Button>
+                    ) : null}
                     <Pill tone="success">{t("checkin.done")}</Pill>
                     <Button
                       variant="ghost"
@@ -190,6 +255,18 @@ export function ClassRoster({
           </div>
         </Card>
       </section>
+
+      {scoring ? (
+        <ScoreDrawer
+          open
+          onClose={() => setScoring(null)}
+          components={drawerComponents}
+          existing={existingFor(scoring.memberId)}
+          date={session.date}
+          memberId={scoring.memberId}
+          memberName={scoring.name}
+        />
+      ) : null}
     </div>
   );
 }
