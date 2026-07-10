@@ -30,14 +30,14 @@ export function WhiteboardDay({
           <Link
             href={`/whiteboard?date=${addDays(date, -1)}`}
             className="rounded-lg border border-hairline px-2.5 py-1 text-ink-secondary hover:bg-row-hover"
-            aria-label="previous day"
+            aria-label={t("common.previous")}
           >
             ←
           </Link>
           <Link
             href={`/whiteboard?date=${addDays(date, 1)}`}
             className="rounded-lg border border-hairline px-2.5 py-1 text-ink-secondary hover:bg-row-hover"
-            aria-label="next day"
+            aria-label={t("common.next")}
           >
             →
           </Link>

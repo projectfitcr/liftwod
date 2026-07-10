@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 /** Bottom-sheet drawer (phone-first; centered panel on desktop). */
 export function Drawer({
@@ -12,6 +13,7 @@ export function Drawer({
   onClose: () => void;
   children: React.ReactNode;
 }) {
+  const { t } = useLanguage();
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -31,7 +33,7 @@ export function Drawer({
     <div className="fixed inset-0 z-40">
       <button
         type="button"
-        aria-label="close"
+        aria-label={t("common.close")}
         className="absolute inset-0 bg-black/60"
         onClick={onClose}
       />

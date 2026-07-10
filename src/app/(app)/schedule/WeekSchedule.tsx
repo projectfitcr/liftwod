@@ -33,7 +33,7 @@ export function WeekSchedule({
           <Link
             href={`/schedule?week=${addDays(weekStart, -7)}`}
             className="rounded-lg border border-hairline px-2.5 py-1 text-ink-secondary hover:bg-row-hover"
-            aria-label="previous week"
+            aria-label={t("common.previous")}
           >
             ←
           </Link>
@@ -48,7 +48,7 @@ export function WeekSchedule({
           <Link
             href={`/schedule?week=${addDays(weekStart, 7)}`}
             className="rounded-lg border border-hairline px-2.5 py-1 text-ink-secondary hover:bg-row-hover"
-            aria-label="next week"
+            aria-label={t("common.next")}
           >
             →
           </Link>

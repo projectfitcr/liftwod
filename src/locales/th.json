@@ -1,27 +1,19 @@
 {
   "app.name": "LIFTwod",
   "app.tagline": "โปรเจกต์ฟิต เชียงราย",
-
   "common.save": "บันทึก",
   "common.cancel": "ยกเลิก",
-  "common.back": "ย้อนกลับ",
   "common.loading": "กำลังโหลด…",
   "common.error": "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
   "common.signOut": "ออกจากระบบ",
   "common.language": "ภาษา",
-  "common.thai": "ไทย",
-  "common.english": "English",
   "common.comingSoon": "เร็ว ๆ นี้",
-
   "nav.today": "วันนี้",
   "nav.schedule": "ตารางคลาส",
   "nav.whiteboard": "กระดานคะแนน",
   "nav.results": "ผลของฉัน",
   "nav.profile": "โปรไฟล์",
-  "nav.coach": "โค้ช",
-  "nav.admin": "แอดมิน",
   "nav.users": "สมาชิก",
-
   "auth.signIn.title": "เข้าสู่ระบบ",
   "auth.signIn.action": "เข้าสู่ระบบ",
   "auth.signIn.noAccount": "เพิ่งมาที่โปรเจกต์ฟิตใช่ไหม?",
@@ -43,27 +35,20 @@
   "auth.reset.sent": "หากอีเมลนี้มีบัญชีอยู่ ระบบได้ส่งลิงก์รีเซ็ตให้แล้ว",
   "auth.update.title": "ตั้งรหัสผ่านใหม่",
   "auth.update.action": "เปลี่ยนรหัสผ่าน",
-  "auth.update.done": "เปลี่ยนรหัสผ่านเรียบร้อย คุณเข้าสู่ระบบแล้ว",
-
   "pending.title": "อีกนิดเดียว!",
   "pending.body": "บัญชีของคุณกำลังรอการอนุมัติจากทีมโปรเจกต์ฟิต กรุณาติดต่อเจ้าหน้าที่ในครั้งถัดไปที่มายิม หรือส่งข้อความหาเรา",
   "pending.signedInAs": "เข้าสู่ระบบในชื่อ {email}",
-
   "today.title": "วันนี้",
-  "today.placeholder": "ตารางคลาสและ WOD ของวันนี้จะแสดงที่นี่เร็ว ๆ นี้",
-
   "profile.title": "โปรไฟล์",
   "profile.name": "ชื่อ",
   "profile.email": "อีเมล",
   "profile.membership": "สมาชิกภาพ",
   "profile.noMembership": "ยังไม่มีข้อมูลสมาชิกภาพ — กรุณาติดต่อเจ้าหน้าที่",
   "profile.changePassword": "เปลี่ยนรหัสผ่าน",
-
   "admin.users.title": "สมาชิก",
   "admin.users.pending": "รอการอนุมัติ",
   "admin.users.noPending": "ไม่มีบัญชีที่รอการอนุมัติ",
   "admin.users.approve": "อนุมัติ",
-  "admin.users.approved": "อนุมัติแล้ว",
   "admin.users.everyone": "ทั้งหมด",
   "admin.users.deactivate": "ปิดใช้งาน",
   "admin.users.reactivate": "เปิดใช้งาน",
@@ -74,10 +59,8 @@
   "admin.users.role.member": "สมาชิก",
   "admin.users.makeCoach": "ตั้งเป็นโค้ช",
   "admin.users.makeMember": "ตั้งเป็นสมาชิก",
-
   "nav.plans": "แพ็กเกจ",
   "nav.memberships": "สมาชิกภาพ",
-
   "plan.type.unlimited": "ไม่จำกัดครั้ง",
   "plan.type.weekly_limited": "จำกัดต่อสัปดาห์",
   "plan.type.visit_pack": "บัตรรายครั้ง",
@@ -87,17 +70,14 @@
   "plan.rule.visit_pack": "{count} ครั้ง ไม่มีวันหมดอายุ",
   "plan.rule.drop_in": "เข้าครั้งเดียว",
   "plan.perMonth": "/ เดือน",
-
   "status.active": "ใช้งานอยู่",
   "status.expiring_soon": "ใกล้หมดอายุ",
   "status.expired": "หมดอายุ",
   "status.on_hold": "พักชั่วคราว",
-
   "method.cash": "เงินสด",
   "method.transfer": "โอนธนาคาร",
   "method.promptpay": "พร้อมเพย์",
   "method.other": "อื่น ๆ",
-
   "admin.plans.title": "แพ็กเกจสมาชิก",
   "admin.plans.new": "สร้างแพ็กเกจ",
   "admin.plans.nameEn": "ชื่อ (อังกฤษ)",
@@ -112,7 +92,6 @@
   "admin.plans.reactivate": "เปิดใช้อีกครั้ง",
   "admin.plans.retired": "เลิกใช้แล้ว",
   "admin.plans.immutable": "แพ็กเกจที่มีการใช้งานแล้วแก้ไขไม่ได้ — ให้เลิกใช้แล้วสร้างแพ็กเกจใหม่แทน",
-
   "admin.memberships.title": "สมาชิกภาพ",
   "admin.memberships.new": "เพิ่มสมาชิกภาพ",
   "admin.memberships.member": "สมาชิก",
@@ -125,8 +104,6 @@
   "admin.memberships.all": "ทั้งหมด",
   "admin.memberships.none": "ยังไม่มีสมาชิกภาพ",
   "admin.memberships.cancelled": "ยกเลิกแล้ว",
-
-  "admin.membership.detail": "สมาชิกภาพ",
   "admin.membership.payments": "การชำระเงิน",
   "admin.membership.noPayments": "ยังไม่มีการชำระเงิน",
   "admin.membership.renew": "บันทึกการต่ออายุ",
@@ -147,14 +124,12 @@
   "admin.membership.cancel": "ยกเลิกสมาชิกภาพนี้",
   "admin.membership.cancelConfirm": "ยกเลิกสมาชิกภาพนี้? การยกเลิกไม่สามารถย้อนกลับได้",
   "admin.membership.holdOverlap": "ช่วงพักซ้อนกับที่มีอยู่แล้ว",
-
   "schedule.noClasses": "ไม่มีคลาส",
   "schedule.coachPrefix": "โค้ช {name}",
   "schedule.spots": "{booked}/{capacity}",
   "schedule.waiting": "รอคิว {count} คน",
   "schedule.cancelledSession": "ยกเลิก",
   "schedule.thisWeek": "สัปดาห์นี้",
-
   "booking.book": "จองคลาส",
   "booking.cancel": "ยกเลิกการจอง",
   "booking.joinWaitlist": "เข้าคิวรอ",
@@ -178,14 +153,12 @@
   "booking.code.ALREADY_CANCELLED": "การจองนี้ถูกยกเลิกไปแล้ว",
   "booking.code.CANCELLED": "ยกเลิกการจองแล้ว — ที่ของคุณถูกปล่อยให้คนอื่น",
   "booking.code.LATE_CANCELLED": "ยกเลิกหลังเวลาที่กำหนด — คลาสนี้ยังนับสิทธิ์รายสัปดาห์ของคุณ",
-
   "booking.code.CHECKIN_WINDOW": "เช็คอินได้ก่อนคลาสเริ่ม 60 นาที",
   "booking.code.ALREADY_CHECKED_IN": "เช็คอินแล้ว",
   "booking.code.CHECKED_IN": "เช็คอินสำเร็จ — ขอให้สนุกกับการออกกำลังกาย!",
   "checkin.self": "เช็คอิน",
   "checkin.done": "เช็คอินแล้ว",
   "checkin.visitsLeft": "บัตรของคุณเหลือ {count} ครั้ง",
-
   "nav.members": "สมาชิก",
   "coach.runClass": "จัดคลาส →",
   "coach.class.roster": "รายชื่อผู้จอง",
@@ -205,7 +178,6 @@
   "coach.member.addNote": "เพิ่มบันทึก",
   "coach.member.deleteNote": "ลบ",
   "coach.member.noNotes": "ไม่มีบันทึก",
-
   "score.time": "จับเวลา",
   "score.rounds_reps": "AMRAP (รอบ + ครั้ง)",
   "score.load": "น้ำหนักสูงสุด",
@@ -213,14 +185,12 @@
   "score.distance": "ระยะทาง",
   "score.calories": "แคลอรี่",
   "score.none": "ไม่เก็บคะแนน",
-
   "kind.warmup": "วอร์มอัพ",
   "kind.strength": "สเตรงธ์",
   "kind.skill": "สกิล",
   "kind.metcon": "เมทคอน",
   "kind.cooldown": "คูลดาวน์",
   "kind.other": "—",
-
   "nav.wods": "WOD",
   "wod.title": "WOD ประจำวัน",
   "wod.none": "ยังไม่มี WOD สำหรับวันนี้",
@@ -228,8 +198,6 @@
   "wod.draft": "แบบร่าง",
   "wod.benchmark": "เบนช์มาร์ก",
   "wod.coachNotes": "โน้ตจากโค้ช",
-  "wod.rxLabel": "Rx",
-
   "coach.wods.title": "โปรแกรม",
   "coach.wods.new": "สร้าง WOD",
   "coach.wods.none": "ยังไม่มีโปรแกรม",
@@ -258,7 +226,6 @@
   "coach.wod.exercises": "ท่าที่เชื่อมโยง (ลิงก์วิดีโอ + ติดตาม PR)",
   "coach.wod.addExercise": "เพิ่ม",
   "coach.wod.removeComponent": "ลบส่วนประกอบ",
-
   "coach.exercises.title": "คลังท่าออกกำลังกาย",
   "coach.exercises.add": "เพิ่มท่า",
   "coach.exercises.nameEn": "ชื่อ (อังกฤษ)",
@@ -270,7 +237,6 @@
   "coach.exercises.restore": "นำกลับมา",
   "coach.exercises.retired": "เลิกใช้แล้ว",
   "coach.exercises.search": "ค้นหา…",
-
   "cat.squat": "สควอท",
   "cat.hinge": "ฮินจ์",
   "cat.press": "เพรส",
@@ -280,7 +246,6 @@
   "cat.monostructural": "คาร์ดิโอ",
   "cat.core": "แกนกลาง",
   "cat.other": "อื่น ๆ",
-
   "scorelog.log": "บันทึกผล",
   "scorelog.edit": "แก้ไขผล",
   "scorelog.yourScore": "ผลของคุณ: {score}",
@@ -300,25 +265,19 @@
   "scorelog.savedPr": "PR! สถิติใหม่ของคุณ 🎉",
   "scorelog.error": "บันทึกไม่สำเร็จ กรุณาตรวจสอบค่าที่กรอกแล้วลองใหม่",
   "scorelog.forMember": "บันทึกให้ {name}",
-
   "whiteboard.title": "กระดานคะแนน",
   "whiteboard.empty": "ยังไม่มีคะแนน — มาเป็นคนแรกบนกระดาน!",
   "whiteboard.noWod": "ยังไม่มี WOD สำหรับวันนี้",
   "whiteboard.openGym": "โอเพ่นยิม",
   "whiteboard.pr": "PR",
-
   "results.title": "ผลของฉัน",
   "results.prs": "สถิติส่วนตัว (PR)",
   "results.noPrs": "ยังไม่มี PR — ลองบันทึกผลเบนช์มาร์กหรือท่าที่ติดตาม",
   "results.history": "ประวัติ",
   "results.noHistory": "ยังไม่มีผล",
-
-  "tv.updated": "อัปเดต {time}",
-
   "today.promoted": "คุณได้ที่แล้ว! มีที่ว่างใน {name}",
   "today.noClasses": "วันนี้ไม่มีคลาส",
   "today.membershipIssue": "สมาชิกภาพ: {status} — กรุณาติดต่อเจ้าหน้าที่",
-
   "admin.schedule.title": "ตารางคลาส",
   "admin.schedule.newTemplate": "สร้างคลาสประจำ",
   "admin.schedule.templates": "คลาสประจำสัปดาห์",
@@ -338,7 +297,6 @@
   "admin.schedule.cancelSession": "ยกเลิก",
   "admin.schedule.cancelSessionConfirm": "ยกเลิกคลาสนี้? สมาชิกที่จองไว้จะยังมีประวัติการจอง แต่คลาสจะไม่จัด",
   "admin.schedule.saveCapacity": "บันทึก",
-  "admin.schedule.generated": "สร้างคลาสเรียบร้อย",
   "day.1": "จ.",
   "day.2": "อ.",
   "day.3": "พ.",
@@ -346,12 +304,10 @@
   "day.5": "ศ.",
   "day.6": "ส.",
   "day.7": "อา.",
-
   "profile.plan": "แพ็กเกจ",
   "profile.validUntil": "ใช้ได้ถึง",
   "profile.visitsRemaining": "จำนวนครั้งคงเหลือ",
   "profile.onHoldUntil": "พักชั่วคราว {from} – {to}",
-
   "admin.invites.title": "ลิงก์คำเชิญ",
   "admin.invites.explainer": "แชร์ลิงก์ผ่าน LINE หรืออีเมล ผู้ที่สมัครผ่านลิงก์จะได้รับการอนุมัติทันทีตามบทบาทที่เลือก",
   "admin.invites.create": "สร้างลิงก์คำเชิญ",
@@ -360,6 +316,9 @@
   "admin.invites.copy": "คัดลอกลิงก์",
   "admin.invites.copied": "คัดลอกแล้ว!",
   "admin.invites.expires": "หมดอายุ {date}",
-  "admin.invites.usedBy": "ใช้แล้ว",
-  "admin.invites.none": "ไม่มีคำเชิญที่เปิดอยู่"
+  "admin.invites.none": "ไม่มีคำเชิญที่เปิดอยู่",
+  "booking.code.NOT_FOUND": "ไม่พบรายการ",
+  "common.previous": "ก่อนหน้า",
+  "common.next": "ถัดไป",
+  "common.close": "ปิด"
 }

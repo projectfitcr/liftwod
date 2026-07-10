@@ -1,27 +1,19 @@
 {
   "app.name": "LIFTwod",
   "app.tagline": "Project Fit Chiang Rai",
-
   "common.save": "Save",
   "common.cancel": "Cancel",
-  "common.back": "Back",
   "common.loading": "Loading…",
   "common.error": "Something went wrong. Please try again.",
   "common.signOut": "Sign out",
   "common.language": "Language",
-  "common.thai": "ไทย",
-  "common.english": "English",
   "common.comingSoon": "Coming soon",
-
   "nav.today": "Today",
   "nav.schedule": "Schedule",
   "nav.whiteboard": "Whiteboard",
   "nav.results": "Results",
   "nav.profile": "Profile",
-  "nav.coach": "Coach",
-  "nav.admin": "Admin",
   "nav.users": "Users",
-
   "auth.signIn.title": "Sign in",
   "auth.signIn.action": "Sign in",
   "auth.signIn.noAccount": "New to Project Fit?",
@@ -43,27 +35,20 @@
   "auth.reset.sent": "If that email has an account, a reset link is on its way.",
   "auth.update.title": "Set a new password",
   "auth.update.action": "Update password",
-  "auth.update.done": "Password updated. You're signed in.",
-
   "pending.title": "Almost there!",
   "pending.body": "Your account is waiting for approval from the Project Fit team. Please see the front desk on your next visit — or send us a message.",
   "pending.signedInAs": "Signed in as {email}",
-
   "today.title": "Today",
-  "today.placeholder": "Your schedule and today's workout will appear here soon.",
-
   "profile.title": "Profile",
   "profile.name": "Name",
   "profile.email": "Email",
   "profile.membership": "Membership",
   "profile.noMembership": "No membership on file — see the front desk.",
   "profile.changePassword": "Change password",
-
   "admin.users.title": "Users",
   "admin.users.pending": "Waiting for approval",
   "admin.users.noPending": "No one is waiting for approval.",
   "admin.users.approve": "Approve",
-  "admin.users.approved": "Approved",
   "admin.users.everyone": "Everyone",
   "admin.users.deactivate": "Deactivate",
   "admin.users.reactivate": "Reactivate",
@@ -74,10 +59,8 @@
   "admin.users.role.member": "Member",
   "admin.users.makeCoach": "Make coach",
   "admin.users.makeMember": "Make member",
-
   "nav.plans": "Plans",
   "nav.memberships": "Memberships",
-
   "plan.type.unlimited": "Unlimited",
   "plan.type.weekly_limited": "Weekly limited",
   "plan.type.visit_pack": "Visit pack",
@@ -87,17 +70,14 @@
   "plan.rule.visit_pack": "{count} visits, never expires",
   "plan.rule.drop_in": "Single visit",
   "plan.perMonth": "/ month",
-
   "status.active": "Active",
   "status.expiring_soon": "Expiring soon",
   "status.expired": "Expired",
   "status.on_hold": "On hold",
-
   "method.cash": "Cash",
   "method.transfer": "Bank transfer",
   "method.promptpay": "PromptPay",
   "method.other": "Other",
-
   "admin.plans.title": "Membership plans",
   "admin.plans.new": "New plan",
   "admin.plans.nameEn": "Name (English)",
@@ -112,7 +92,6 @@
   "admin.plans.reactivate": "Reactivate",
   "admin.plans.retired": "Retired",
   "admin.plans.immutable": "Plans in use can't be edited — retire this one and create a new plan to change the rules.",
-
   "admin.memberships.title": "Memberships",
   "admin.memberships.new": "New membership",
   "admin.memberships.member": "Member",
@@ -125,8 +104,6 @@
   "admin.memberships.all": "All",
   "admin.memberships.none": "No memberships yet.",
   "admin.memberships.cancelled": "Cancelled",
-
-  "admin.membership.detail": "Membership",
   "admin.membership.payments": "Payments",
   "admin.membership.noPayments": "No payments recorded.",
   "admin.membership.renew": "Record renewal payment",
@@ -147,14 +124,12 @@
   "admin.membership.cancel": "Cancel this membership",
   "admin.membership.cancelConfirm": "Cancel this membership? This can't be undone.",
   "admin.membership.holdOverlap": "That hold overlaps an existing one.",
-
   "schedule.noClasses": "No classes",
   "schedule.coachPrefix": "Coach {name}",
   "schedule.spots": "{booked}/{capacity}",
   "schedule.waiting": "{count} waiting",
   "schedule.cancelledSession": "Cancelled",
   "schedule.thisWeek": "This week",
-
   "booking.book": "Book",
   "booking.cancel": "Cancel booking",
   "booking.joinWaitlist": "Join waitlist",
@@ -178,14 +153,12 @@
   "booking.code.ALREADY_CANCELLED": "This booking was already cancelled.",
   "booking.code.CANCELLED": "Booking cancelled — your spot is released.",
   "booking.code.LATE_CANCELLED": "Cancelled after the cutoff — this class still counts toward your weekly limit.",
-
   "booking.code.CHECKIN_WINDOW": "Check-in opens 60 minutes before class.",
   "booking.code.ALREADY_CHECKED_IN": "Already checked in.",
   "booking.code.CHECKED_IN": "Checked in — have a great workout!",
   "checkin.self": "Check in",
   "checkin.done": "Checked in",
   "checkin.visitsLeft": "{count} visits left on your pack.",
-
   "nav.members": "Members",
   "coach.runClass": "Run class →",
   "coach.class.roster": "Roster",
@@ -205,7 +178,6 @@
   "coach.member.addNote": "Add note",
   "coach.member.deleteNote": "Delete",
   "coach.member.noNotes": "No notes.",
-
   "score.time": "For time",
   "score.rounds_reps": "AMRAP (rounds + reps)",
   "score.load": "Max load",
@@ -213,14 +185,12 @@
   "score.distance": "Distance",
   "score.calories": "Calories",
   "score.none": "Not scored",
-
   "kind.warmup": "Warm-up",
   "kind.strength": "Strength",
   "kind.skill": "Skill",
   "kind.metcon": "Metcon",
   "kind.cooldown": "Cooldown",
   "kind.other": "—",
-
   "nav.wods": "WODs",
   "wod.title": "Workout of the day",
   "wod.none": "No workout posted for this day.",
@@ -228,8 +198,6 @@
   "wod.draft": "Draft",
   "wod.benchmark": "Benchmark",
   "wod.coachNotes": "Coach notes",
-  "wod.rxLabel": "Rx",
-
   "coach.wods.title": "Programming",
   "coach.wods.new": "New WOD",
   "coach.wods.none": "Nothing programmed yet.",
@@ -258,7 +226,6 @@
   "coach.wod.exercises": "Linked exercises (demo links + lift PR tracking)",
   "coach.wod.addExercise": "Add",
   "coach.wod.removeComponent": "Remove component",
-
   "coach.exercises.title": "Exercise library",
   "coach.exercises.add": "Add exercise",
   "coach.exercises.nameEn": "Name (English)",
@@ -270,7 +237,6 @@
   "coach.exercises.restore": "Restore",
   "coach.exercises.retired": "Retired",
   "coach.exercises.search": "Search…",
-
   "cat.squat": "Squat",
   "cat.hinge": "Hinge",
   "cat.press": "Press",
@@ -280,7 +246,6 @@
   "cat.monostructural": "Mono",
   "cat.core": "Core",
   "cat.other": "Other",
-
   "scorelog.log": "Log score",
   "scorelog.edit": "Edit score",
   "scorelog.yourScore": "Your score: {score}",
@@ -300,25 +265,19 @@
   "scorelog.savedPr": "PR! New personal record 🎉",
   "scorelog.error": "Couldn't save the score. Check the values and try again.",
   "scorelog.forMember": "Logging for {name}",
-
   "whiteboard.title": "Whiteboard",
   "whiteboard.empty": "No scores yet — be the first on the board!",
   "whiteboard.noWod": "No workout posted for this day.",
   "whiteboard.openGym": "Open gym",
   "whiteboard.pr": "PR",
-
   "results.title": "My results",
   "results.prs": "Personal records",
   "results.noPrs": "No PRs yet — log a benchmark or a tracked lift.",
   "results.history": "History",
   "results.noHistory": "No results yet.",
-
-  "tv.updated": "Updated {time}",
-
   "today.promoted": "You're in! A spot opened up in {name}.",
   "today.noClasses": "No classes today.",
   "today.membershipIssue": "Membership: {status} — see the front desk.",
-
   "admin.schedule.title": "Class schedule",
   "admin.schedule.newTemplate": "New class template",
   "admin.schedule.templates": "Weekly templates",
@@ -338,7 +297,6 @@
   "admin.schedule.cancelSession": "Cancel",
   "admin.schedule.cancelSessionConfirm": "Cancel this session? Booked members keep their booking record but the class won't run.",
   "admin.schedule.saveCapacity": "Save",
-  "admin.schedule.generated": "Sessions generated.",
   "day.1": "Mon",
   "day.2": "Tue",
   "day.3": "Wed",
@@ -346,12 +304,10 @@
   "day.5": "Fri",
   "day.6": "Sat",
   "day.7": "Sun",
-
   "profile.plan": "Plan",
   "profile.validUntil": "Valid until",
   "profile.visitsRemaining": "Visits remaining",
   "profile.onHoldUntil": "On hold {from} – {to}",
-
   "admin.invites.title": "Invite links",
   "admin.invites.explainer": "Share a link over LINE or email. Whoever signs up with it is approved instantly, with the role you chose.",
   "admin.invites.create": "New invite link",
@@ -360,6 +316,9 @@
   "admin.invites.copy": "Copy link",
   "admin.invites.copied": "Copied!",
   "admin.invites.expires": "Expires {date}",
-  "admin.invites.usedBy": "Used",
-  "admin.invites.none": "No open invites."
+  "admin.invites.none": "No open invites.",
+  "booking.code.NOT_FOUND": "Not found.",
+  "common.previous": "Previous",
+  "common.next": "Next",
+  "common.close": "Close"
 }
