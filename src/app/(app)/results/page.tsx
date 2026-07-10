@@ -6,7 +6,8 @@ export default async function ResultsPage() {
   const profile = await requireUser();
   const supabase = await createSupabaseServerClient();
 
-  const [{ data: prs }, { data: history }] = await Promise.all([
+  const [{ data: prs }, { data: history }, { data: benchmarks }, { data: lifts }] =
+    await Promise.all([
     supabase
       .from("prs")
       .select(
@@ -25,12 +26,24 @@ export default async function ResultsPage() {
       .eq("member_id", profile.id)
       .order("created_at", { ascending: false })
       .limit(50),
+    supabase.from("benchmarks").select("id, name").order("name"),
+    supabase
+      .from("exercises")
+      .select("id, name_en, name_th")
+      .eq("is_tracked_lift", true)
+      .eq("is_active", true)
+      .order("name_en"),
   ]);
 
   // Current best per PR lane: first (latest) row per lane key wins.
+  // Lift lanes ignore Rx (a heavy single is a heavy single) — mirror the
+  // trigger's lane identity here.
   const seen = new Set<string>();
   const bestPrs = (prs ?? []).filter((p) => {
-    const key = `${p.kind}:${p.benchmarks?.name ?? ""}:${p.exercises?.name_en ?? ""}:${p.score_type}:${p.is_rx}`;
+    const key =
+      p.kind === "lift"
+        ? `lift:${p.exercises?.name_en ?? ""}`
+        : `benchmark:${p.benchmarks?.name ?? ""}:${p.score_type}:${p.is_rx}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -38,6 +51,8 @@ export default async function ResultsPage() {
 
   return (
     <ResultsView
+      benchmarks={benchmarks ?? []}
+      lifts={lifts ?? []}
       prs={bestPrs.map((p) => ({
         id: p.id,
         kind: p.kind,

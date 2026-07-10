@@ -327,5 +327,13 @@
   "admin.users.lastAdmin": "ไม่สามารถถอดแอดมินคนสุดท้ายได้",
   "profile.changePhoto": "เปลี่ยนรูป",
   "profile.photoUploading": "กำลังอัปโหลด…",
-  "profile.photoError": "อัปโหลดรูปไม่สำเร็จ ลองใช้รูปที่เล็กลง"
+  "profile.photoError": "อัปโหลดรูปไม่สำเร็จ ลองใช้รูปที่เล็กลง",
+  "results.addPr": "เพิ่ม PR",
+  "results.addPrTitle": "บันทึกสถิติที่มีอยู่แล้ว",
+  "results.addPrHint": "มีสถิติเดิมอยู่แล้ว? บันทึกไว้ที่นี่ — ผลใหม่ที่ทำได้ดีกว่าจะนับเป็น PR ใหม่",
+  "results.pickOne": "ท่าหรือเบนช์มาร์ก",
+  "results.benchmarksGroup": "เบนช์มาร์ก",
+  "results.liftsGroup": "ท่ายกน้ำหนัก",
+  "common.continue": "ถัดไป",
+  "scorelog.achievedOn": "ทำได้เมื่อ"
 }

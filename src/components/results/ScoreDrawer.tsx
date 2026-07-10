@@ -42,6 +42,7 @@ export function ScoreDrawer({
   date,
   memberId,
   memberName,
+  showDateField = false,
 }: {
   open: boolean;
   onClose: () => void;
@@ -51,6 +52,8 @@ export function ScoreDrawer({
   date: string;
   memberId?: string;
   memberName?: string;
+  /** Baseline-PR entry: let the user say when they achieved it. */
+  showDateField?: boolean;
 }) {
   const { t } = useLanguage();
   const router = useRouter();
@@ -62,6 +65,7 @@ export function ScoreDrawer({
   const [comment, setComment] = useState("");
   const [fields, setFields] = useState<Record<string, string>>({});
   const [result, setResult] = useState<"ok" | "pr" | "error" | null>(null);
+  const [achievedOn, setAchievedOn] = useState(date);
 
   const component = components.find((c) => c.id === componentId);
 
@@ -113,6 +117,7 @@ export function ScoreDrawer({
         date,
         isRx,
         comment: comment || undefined,
+        achievedOn: showDateField ? achievedOn : undefined,
         values,
       });
       if (!res.ok) {
@@ -205,6 +210,21 @@ export function ScoreDrawer({
             <span className="mb-1 block text-sm text-ink-tertiary">{t("scorelog.calories")}</span>
             <input className={inputCls} inputMode="numeric" pattern="[0-9]*" required
               value={fields.calories ?? ""} onChange={(e) => setFields({ ...fields, calories: e.target.value })} />
+          </label>
+        ) : null}
+
+        {showDateField ? (
+          <label className="block">
+            <span className="mb-1 block text-sm text-ink-tertiary">
+              {t("scorelog.achievedOn")}
+            </span>
+            <input
+              type="date"
+              className="w-full rounded-lg border border-hairline bg-surface-raised px-3 py-2 text-sm"
+              value={achievedOn}
+              max={date}
+              onChange={(e) => setAchievedOn(e.target.value)}
+            />
           </label>
         ) : null}
 

@@ -173,18 +173,21 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          score_type: Database["public"]["Enums"]["score_type"]
         }
         Insert: {
           created_at?: string
           description?: string | null
           id?: string
           name: string
+          score_type?: Database["public"]["Enums"]["score_type"]
         }
         Update: {
           created_at?: string
           description?: string | null
           id?: string
           name?: string
+          score_type?: Database["public"]["Enums"]["score_type"]
         }
         Relationships: []
       }
@@ -1022,6 +1025,7 @@ export type Database = {
       }
       results: {
         Row: {
+          achieved_on: string | null
           calories: number | null
           comment: string | null
           component_id: string
@@ -1041,6 +1045,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          achieved_on?: string | null
           calories?: number | null
           comment?: string | null
           component_id: string
@@ -1060,6 +1065,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          achieved_on?: string | null
           calories?: number | null
           comment?: string | null
           component_id?: string
@@ -1211,6 +1217,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           id: string
+          is_baseline: boolean
           location_id: string | null
           published: boolean
           reveal_at: string | null
@@ -1225,6 +1232,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_baseline?: boolean
           location_id?: string | null
           published?: boolean
           reveal_at?: string | null
@@ -1239,6 +1247,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_baseline?: boolean
           location_id?: string | null
           published?: boolean
           reveal_at?: string | null
@@ -1422,6 +1431,13 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      ensure_baseline_component: {
+        Args: { p_kind: Database["public"]["Enums"]["pr_kind"]; p_ref: string }
+        Returns: {
+          component_id: string
+          component_score_type: Database["public"]["Enums"]["score_type"]
+        }[]
       }
       evaluate_pr_lanes: {
         Args: { r: Database["public"]["Tables"]["results"]["Row"] }

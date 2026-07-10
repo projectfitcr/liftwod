@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth/guards";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { Database } from "@/lib/supabase/database.types";
 
 export type ScoreValues = {
   timeSeconds?: number;
@@ -26,6 +27,7 @@ export async function logResult(input: {
   date: string; // the WOD's date, for session attribution + revalidate
   isRx: boolean;
   comment?: string;
+  achievedOn?: string; // baselines: when the PR was actually achieved
   values: ScoreValues;
 }): Promise<{ ok: boolean; isPr: boolean }> {
   const user = await requireUser();
@@ -52,6 +54,7 @@ export async function logResult(input: {
         session_id: att?.session_id ?? null,
         is_rx: input.isRx,
         comment: input.comment || null,
+        achieved_on: input.achievedOn ?? null,
         entered_by: memberId !== user.id ? user.id : null,
         time_seconds: input.values.timeSeconds ?? null,
         rounds: input.values.rounds ?? null,
@@ -71,4 +74,28 @@ export async function logResult(input: {
   revalidatePath("/results");
 
   return { ok: !error, isPr: data?.is_pr ?? false };
+}
+
+/** Find-or-create the shared baseline component for a benchmark or tracked
+ *  lift (the "record an existing PR" flow). */
+export async function getBaselineComponent(
+  kind: "benchmark" | "lift",
+  refId: string
+): Promise<
+  | { ok: true; componentId: string; scoreType: Database["public"]["Enums"]["score_type"] }
+  | { ok: false }
+> {
+  await requireUser();
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.rpc("ensure_baseline_component", {
+    p_kind: kind,
+    p_ref: refId,
+  });
+  const row = data?.[0];
+  if (error || !row) return { ok: false };
+  return {
+    ok: true,
+    componentId: row.component_id,
+    scoreType: row.component_score_type,
+  };
 }

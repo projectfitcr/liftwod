@@ -1,6 +1,11 @@
 "use client";
 
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import {
+  AddBaselinePr,
+  type BaselineBenchmark,
+  type BaselineLift,
+} from "@/components/results/AddBaselinePr";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { formatDate, formatMMSS, formatNumber, formatScore } from "@/lib/format";
@@ -49,9 +54,13 @@ function formatPrValue(language: "en" | "th", p: PrRow): string {
 export function ResultsView({
   prs,
   history,
+  benchmarks,
+  lifts,
 }: {
   prs: PrRow[];
   history: HistoryRow[];
+  benchmarks: BaselineBenchmark[];
+  lifts: BaselineLift[];
 }) {
   const { t, language } = useLanguage();
 
@@ -60,7 +69,10 @@ export function ResultsView({
       <h1 className="text-xl font-semibold">{t("results.title")}</h1>
 
       <section>
-        <h2 className="mb-2 text-sm font-medium text-ink-secondary">{t("results.prs")}</h2>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-sm font-medium text-ink-secondary">{t("results.prs")}</h2>
+          <AddBaselinePr benchmarks={benchmarks} lifts={lifts} />
+        </div>
         <Card>
           {prs.length === 0 ? (
             <p className="text-sm text-ink-tertiary">{t("results.noPrs")}</p>

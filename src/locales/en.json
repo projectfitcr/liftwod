@@ -327,5 +327,13 @@
   "admin.users.lastAdmin": "You can't remove the last admin.",
   "profile.changePhoto": "Change photo",
   "profile.photoUploading": "Uploading…",
-  "profile.photoError": "Couldn't upload the photo. Try a smaller image."
+  "profile.photoError": "Couldn't upload the photo. Try a smaller image.",
+  "results.addPr": "Add a PR",
+  "results.addPrTitle": "Record an existing PR",
+  "results.addPrHint": "Already have bests from before? Enter them here — future scores that beat them will count as new PRs.",
+  "results.pickOne": "Exercise or benchmark",
+  "results.benchmarksGroup": "Benchmarks",
+  "results.liftsGroup": "Lifts",
+  "common.continue": "Continue",
+  "scorelog.achievedOn": "When achieved"
 }

@@ -8,6 +8,7 @@ export default async function CoachWodsPage() {
   const { data: workouts } = await supabase
     .from("workouts")
     .select("id, title, scheduled_on, published, reveal_at, benchmarks(name)")
+    .eq("is_baseline", false) // shared baseline-PR containers aren't programming
     .order("scheduled_on", { ascending: false, nullsFirst: true })
     .limit(60);
 
