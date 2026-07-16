@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start -p 3002",
     "lint": "eslint",
-    "seed:users": "node --experimental-strip-types scripts/seed-users.ts"
+    "seed:users": "node --experimental-strip-types scripts/seed-users.ts",
+    "demo:seed": "node --experimental-strip-types scripts/seed-demo.ts",
+    "demo:clear": "node --experimental-strip-types scripts/clear-demo.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
