@@ -1,21 +1,19 @@
 /* LIFTwod service worker — deliberately small (see CLAUDE.md).
- * Offline scope is READ-ONLY: the last-seen Today / Schedule / WOD pages
- * render from cache; writes fail with the app's own bilingual messaging.
+ * Personalized navigations are never cached so one member's data cannot be
+ * shown to another member on a shared device. Static assets remain available
+ * and offline navigations land on the neutral offline page.
  * Bump VERSION when changing caching behaviour. */
-const VERSION = "v1";
+const VERSION = "v2";
 const STATIC_CACHE = `liftwod-static-${VERSION}`;
 const PAGES_CACHE = `liftwod-pages-${VERSION}`;
 const OFFLINE_URL = "/offline";
-
-// Navigations worth revisiting offline (prefix match).
-const CACHEABLE_PAGES = ["/today", "/schedule", "/wod/", "/whiteboard", "/results"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(PAGES_CACHE)
       .then((cache) => cache.add(OFFLINE_URL))
-      .then(() => self.skipWaiting())
+      .then(() => self.skipWaiting()),
   );
 });
 
@@ -27,10 +25,10 @@ self.addEventListener("activate", (event) => {
         Promise.all(
           keys
             .filter((k) => k.startsWith("liftwod-") && !k.endsWith(VERSION))
-            .map((k) => caches.delete(k))
-        )
+            .map((k) => caches.delete(k)),
+        ),
       )
-      .then(() => self.clients.claim())
+      .then(() => self.clients.claim()),
   );
 });
 
@@ -55,31 +53,16 @@ self.addEventListener("fetch", (event) => {
             const copy = res.clone();
             caches.open(STATIC_CACHE).then((c) => c.put(request, copy));
             return res;
-          })
-      )
+          }),
+      ),
     );
     return;
   }
 
-  // Page navigations: network-first with cached fallback, then /offline.
+  // Personalized pages are network-only. The fallback is deliberately generic
+  // because cached HTML/RSC responses can contain another member's data.
   if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
-        .then((res) => {
-          if (
-            res.ok &&
-            CACHEABLE_PAGES.some((p) => url.pathname === p || url.pathname.startsWith(p))
-          ) {
-            const copy = res.clone();
-            caches.open(PAGES_CACHE).then((c) => c.put(request, copy));
-          }
-          return res;
-        })
-        .catch(async () => {
-          const hit = await caches.match(request);
-          return hit || caches.match(OFFLINE_URL);
-        })
-    );
+    event.respondWith(fetch(request).catch(() => caches.match(OFFLINE_URL)));
   }
   // Everything else (API, RSC fetches): straight to the network.
 });

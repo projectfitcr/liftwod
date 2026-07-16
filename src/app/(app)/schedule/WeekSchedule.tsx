@@ -14,12 +14,14 @@ export function WeekSchedule({
   days,
   currentWeekStart,
   isStaff,
+  nowIso,
 }: {
   weekStart: string;
   today: string;
   days: DaySessions[];
   currentWeekStart: string;
   isStaff: boolean;
+  nowIso: string;
 }) {
   const { t, language } = useLanguage();
   const byDate = new Map(days.map((d) => [d.date, d.sessions]));
@@ -28,11 +30,17 @@ export function WeekSchedule({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
-        <h1 className="text-xl font-semibold">{t("nav.schedule")}</h1>
+        <div>
+          <h1 className="text-2xl font-bold">{t("nav.schedule")}</h1>
+          <p className="mt-0.5 text-sm text-ink-tertiary">
+            {formatDate(language, weekStart)} –{" "}
+            {formatDate(language, addDays(weekStart, 6))}
+          </p>
+        </div>
         <div className="flex items-center gap-1.5 text-sm">
           <Link
             href={`/schedule?week=${addDays(weekStart, -7)}`}
-            className="rounded-lg border border-hairline px-2.5 py-1 text-ink-secondary hover:bg-row-hover"
+            className="flex h-11 w-11 items-center justify-center rounded-lg border border-hairline text-ink-secondary hover:bg-row-hover"
             aria-label={t("common.previous")}
           >
             ←
@@ -47,7 +55,7 @@ export function WeekSchedule({
           ) : null}
           <Link
             href={`/schedule?week=${addDays(weekStart, 7)}`}
-            className="rounded-lg border border-hairline px-2.5 py-1 text-ink-secondary hover:bg-row-hover"
+            className="flex h-11 w-11 items-center justify-center rounded-lg border border-hairline text-ink-secondary hover:bg-row-hover"
             aria-label={t("common.next")}
           >
             →
@@ -66,14 +74,22 @@ export function WeekSchedule({
                   isToday ? "text-primary" : "text-ink-secondary"
                 }`}
               >
-                {t(`day.${isoDow(date)}` as LocaleKey)} {formatDate(language, date)}
+                {t(`day.${isoDow(date)}` as LocaleKey)}{" "}
+                {formatDate(language, date)}
               </h2>
               {sessions.length === 0 ? (
-                <p className="text-xs text-ink-tertiary">{t("schedule.noClasses")}</p>
+                <p className="text-xs text-ink-tertiary">
+                  {t("schedule.noClasses")}
+                </p>
               ) : (
                 <div className="space-y-2">
                   {sessions.map((s) => (
-                    <ClassCard key={s.id} session={s} staffLink={isStaff} />
+                    <ClassCard
+                      key={s.id}
+                      session={s}
+                      staffLink={isStaff}
+                      nowIso={nowIso}
+                    />
                   ))}
                 </div>
               )}

@@ -22,13 +22,16 @@ export default function SignInPage() {
     setBusy(true);
     setError(false);
     const supabase = getSupabaseBrowserClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) {
       setError(true);
       setBusy(false);
       return;
     }
-    router.push("/today");
+    router.push("/");
     router.refresh();
   }
 

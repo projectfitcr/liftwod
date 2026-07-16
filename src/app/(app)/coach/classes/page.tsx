@@ -1,16 +1,15 @@
-import { requireUser } from "@/lib/auth/guards";
+import { requireStaff } from "@/lib/auth/guards";
 import { getSessionViews } from "@/lib/schedule/queries";
 import { addDays, bangkokToday, weekStartOf } from "@/lib/dates";
-import { WeekSchedule } from "./WeekSchedule";
+import { CoachClasses } from "./CoachClasses";
 
-export default async function SchedulePage({
+export default async function CoachClassesPage({
   searchParams,
 }: {
   searchParams: Promise<{ week?: string }>;
 }) {
-  const profile = await requireUser();
+  const profile = await requireStaff();
   const { week } = await searchParams;
-
   const today = bangkokToday();
   const weekStart = weekStartOf(
     /^\d{4}-\d{2}-\d{2}$/.test(week ?? "") ? week! : today,
@@ -21,14 +20,5 @@ export default async function SchedulePage({
     profile.id,
   );
 
-  return (
-    <WeekSchedule
-      weekStart={weekStart}
-      today={today}
-      days={days}
-      currentWeekStart={weekStartOf(today)}
-      isStaff={profile.role === "admin" || profile.role === "coach"}
-      nowIso={new Date().toISOString()}
-    />
-  );
+  return <CoachClasses weekStart={weekStart} days={days} />;
 }

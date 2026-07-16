@@ -2,20 +2,26 @@ import { requireUser } from "@/lib/auth/guards";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getSessionViews } from "@/lib/schedule/queries";
 import { getCurrentMembershipSummary } from "@/lib/memberships/queries";
-import { getMyResults, getWodForDate, isHiddenFromMembers } from "@/lib/wods/queries";
+import {
+  getMyResults,
+  getWodForDate,
+  isHiddenFromMembers,
+} from "@/lib/wods/queries";
 import { bangkokToday } from "@/lib/dates";
+import { getBoard } from "@/lib/whiteboard/queries";
 import { TodayView } from "./TodayView";
 
 export default async function TodayPage() {
   const profile = await requireUser();
   const supabase = await createSupabaseServerClient();
   const today = bangkokToday();
-  const isStaff = profile.role === "admin" || profile.role === "coach";
+  const nowIso = new Date().toISOString();
 
-  const [days, summary, wod, { data: promotions }] = await Promise.all([
+  const [days, summary, wod, board, { data: promotions }] = await Promise.all([
     getSessionViews(today, today, profile.id),
     getCurrentMembershipSummary(profile.id),
     getWodForDate(today),
+    getBoard(today),
     supabase
       .from("bookings")
       .select("id, promoted_at, class_sessions(name, starts_at)")
@@ -28,7 +34,7 @@ export default async function TodayPage() {
   const myResults = wod
     ? await getMyResults(
         wod.components.map((c) => c.id),
-        profile.id
+        profile.id,
       )
     : {};
 
@@ -38,11 +44,15 @@ export default async function TodayPage() {
       sessions={days[0]?.sessions ?? []}
       membershipStatus={summary?.status ?? null}
       hasMembership={summary != null}
-      isStaff={isStaff}
+      memberId={profile.id}
+      nowIso={nowIso}
       today={today}
       myResults={myResults}
       wod={wod}
-      wodHidden={isStaff && wod ? isHiddenFromMembers(wod) : false}
+      wodHidden={
+        profile.role !== "member" && wod ? isHiddenFromMembers(wod) : false
+      }
+      board={board}
       promotions={(promotions ?? [])
         .filter((p) => p.class_sessions)
         .map((p) => ({ id: p.id, sessionName: p.class_sessions!.name }))}

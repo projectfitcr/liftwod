@@ -4,13 +4,20 @@ import { useState, useTransition } from "react";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Button } from "@/components/ui/Button";
 import { Drawer } from "@/components/ui/Drawer";
-import { ScoreDrawer, type ScorableComponent } from "@/components/results/ScoreDrawer";
+import {
+  ScoreDrawer,
+  type ScorableComponent,
+} from "@/components/results/ScoreDrawer";
 import { getBaselineComponent } from "@/lib/results/actions";
 import { bangkokToday } from "@/lib/dates";
 import { localizedName } from "@/lib/i18n";
 
 export type BaselineBenchmark = { id: string; name: string };
-export type BaselineLift = { id: string; name_en: string; name_th: string | null };
+export type BaselineLift = {
+  id: string;
+  name_en: string;
+  name_th: string | null;
+};
 
 /** "Record an existing PR": pick a benchmark or tracked lift, then reuse the
  *  normal score drawer (with an achieved-on date) against the shared baseline
@@ -34,7 +41,10 @@ export function AddBaselinePr({
     const label =
       kind === "benchmark"
         ? (benchmarks.find((b) => b.id === refId)?.name ?? "")
-        : localizedName(language, lifts.find((l) => l.id === refId) ?? { name_en: "", name_th: null });
+        : localizedName(
+            language,
+            lifts.find((l) => l.id === refId) ?? { name_en: "", name_th: null },
+          );
     setError(false);
     startTransition(async () => {
       const res = await getBaselineComponent(kind, refId);
@@ -53,9 +63,15 @@ export function AddBaselinePr({
         {t("results.addPr")}
       </Button>
 
-      <Drawer open={pickerOpen} onClose={() => setPickerOpen(false)}>
+      <Drawer
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        labelledBy="baseline-pr-title"
+      >
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold">{t("results.addPrTitle")}</h2>
+          <h2 id="baseline-pr-title" className="text-lg font-semibold">
+            {t("results.addPrTitle")}
+          </h2>
           <p className="text-xs text-ink-tertiary">{t("results.addPrHint")}</p>
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-ink-secondary">
@@ -83,7 +99,9 @@ export function AddBaselinePr({
               </optgroup>
             </select>
           </label>
-          {error ? <p className="text-sm text-danger-ink">{t("common.error")}</p> : null}
+          {error ? (
+            <p className="text-sm text-danger-ink">{t("common.error")}</p>
+          ) : null}
           <div className="flex gap-2">
             <Button
               type="button"

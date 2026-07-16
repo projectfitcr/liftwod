@@ -9,7 +9,7 @@ export default async function CoachMembersPage() {
   const [{ data: people }, { data: lastAttendance }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, full_name, nickname, email, role, avatar_url")
+      .select("id, full_name, nickname, email, role, avatar_url, created_at")
       .not("approved_at", "is", null)
       .eq("is_active", true)
       .order("full_name"),
@@ -30,6 +30,7 @@ export default async function CoachMembersPage() {
     name: p.nickname || p.full_name || p.email || "—",
     role: p.role,
     avatarUrl: p.avatar_url,
+    createdAt: p.created_at,
     lastAttended: last.get(p.id) ?? null,
   }));
 
@@ -41,5 +42,5 @@ export default async function CoachMembersPage() {
     return a.lastAttended.localeCompare(b.lastAttended);
   });
 
-  return <MembersList rows={rows} />;
+  return <MembersList rows={rows} nowIso={new Date().toISOString()} />;
 }

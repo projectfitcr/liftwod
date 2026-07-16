@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Button } from "@/components/ui/Button";
@@ -31,6 +32,27 @@ export type ExistingScore = {
 const inputCls =
   "w-full rounded-lg border border-hairline bg-surface-raised px-3 py-2.5 text-lg tabular-nums text-ink-primary focus:outline-none focus:shadow-[var(--focus-ring)]";
 
+function fieldsFor(existingScore?: ExistingScore): Record<string, string> {
+  if (!existingScore) return {};
+  return {
+    min:
+      existingScore.time_seconds != null
+        ? String(Math.floor(existingScore.time_seconds / 60))
+        : "",
+    sec:
+      existingScore.time_seconds != null
+        ? String(existingScore.time_seconds % 60)
+        : "",
+    rounds: existingScore.rounds != null ? String(existingScore.rounds) : "",
+    reps: existingScore.reps != null ? String(existingScore.reps) : "",
+    load: existingScore.load_kg != null ? String(existingScore.load_kg) : "",
+    distance:
+      existingScore.distance_m != null ? String(existingScore.distance_m) : "",
+    calories:
+      existingScore.calories != null ? String(existingScore.calories) : "",
+  };
+}
+
 /** Keypad-friendly, score-type-aware entry. Used by members (self) and
  *  coaches (on-behalf, memberId + memberName set). */
 export function ScoreDrawer({
@@ -43,6 +65,7 @@ export function ScoreDrawer({
   memberId,
   memberName,
   showDateField = false,
+  successHref,
 }: {
   open: boolean;
   onClose: () => void;
@@ -54,49 +77,42 @@ export function ScoreDrawer({
   memberName?: string;
   /** Baseline-PR entry: let the user say when they achieved it. */
   showDateField?: boolean;
+  successHref?: string;
 }) {
   const { t } = useLanguage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [componentId, setComponentId] = useState(
-    initialComponentId ?? components[0]?.id ?? ""
+  const firstComponentId = initialComponentId ?? components[0]?.id ?? "";
+  const firstExisting = existing?.[firstComponentId];
+  const [componentId, setComponentId] = useState(firstComponentId);
+  const [isRx, setIsRx] = useState<boolean | null>(
+    firstExisting ? firstExisting.is_rx : null,
   );
-  const [isRx, setIsRx] = useState(false);
-  const [comment, setComment] = useState("");
-  const [fields, setFields] = useState<Record<string, string>>({});
+  const [comment, setComment] = useState(firstExisting?.comment ?? "");
+  const [fields, setFields] = useState<Record<string, string>>(() =>
+    fieldsFor(firstExisting),
+  );
   const [result, setResult] = useState<"ok" | "pr" | "error" | null>(null);
   const [achievedOn, setAchievedOn] = useState(date);
 
   const component = components.find((c) => c.id === componentId);
 
-  function fieldsFor(existingScore?: ExistingScore): Record<string, string> {
-    if (!existingScore) return {};
-    return {
-      min: existingScore.time_seconds != null ? String(Math.floor(existingScore.time_seconds / 60)) : "",
-      sec: existingScore.time_seconds != null ? String(existingScore.time_seconds % 60) : "",
-      rounds: existingScore.rounds != null ? String(existingScore.rounds) : "",
-      reps: existingScore.reps != null ? String(existingScore.reps) : "",
-      load: existingScore.load_kg != null ? String(existingScore.load_kg) : "",
-      distance: existingScore.distance_m != null ? String(existingScore.distance_m) : "",
-      calories: existingScore.calories != null ? String(existingScore.calories) : "",
-    };
-  }
-
   function selectComponent(id: string) {
     setComponentId(id);
     const ex = existing?.[id];
     setFields(fieldsFor(ex));
-    setIsRx(ex?.is_rx ?? false);
+    setIsRx(ex ? ex.is_rx : null);
     setComment(ex?.comment ?? "");
     setResult(null);
   }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!component) return;
+    if (!component || isRx == null) return;
     const values: ScoreValues = {};
     if (component.scoreType === "time") {
-      values.timeSeconds = (Number(fields.min) || 0) * 60 + (Number(fields.sec) || 0);
+      values.timeSeconds =
+        (Number(fields.min) || 0) * 60 + (Number(fields.sec) || 0);
     } else if (component.scoreType === "rounds_reps") {
       values.rounds = Number(fields.rounds) || 0;
       values.reps = Number(fields.reps) || 0;
@@ -126,15 +142,16 @@ export function ScoreDrawer({
       }
       setResult(res.isPr ? "pr" : "ok");
       router.refresh();
-      setTimeout(onClose, res.isPr ? 1600 : 800);
     });
   }
 
   return (
-    <Drawer open={open} onClose={onClose}>
+    <Drawer open={open} onClose={onClose} labelledBy="score-drawer-title">
       <form onSubmit={submit} className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">{t("scorelog.log")}</h2>
+          <h2 id="score-drawer-title" className="text-lg font-semibold">
+            {t("scorelog.log")}
+          </h2>
           {memberName ? (
             <span className="text-xs text-ink-tertiary">
               {t("scorelog.forMember", { name: memberName })}
@@ -164,52 +181,119 @@ export function ScoreDrawer({
         {component?.scoreType === "time" ? (
           <div className="flex gap-2">
             <label className="block flex-1">
-              <span className="mb-1 block text-sm text-ink-tertiary">{t("scorelog.minutes")}</span>
-              <input className={inputCls} inputMode="numeric" pattern="[0-9]*" required
-                value={fields.min ?? ""} onChange={(e) => setFields({ ...fields, min: e.target.value })} />
+              <span className="mb-1 block text-sm text-ink-tertiary">
+                {t("scorelog.minutes")}
+              </span>
+              <input
+                className={inputCls}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                required
+                value={fields.min ?? ""}
+                onChange={(e) => setFields({ ...fields, min: e.target.value })}
+              />
             </label>
             <label className="block flex-1">
-              <span className="mb-1 block text-sm text-ink-tertiary">{t("scorelog.seconds")}</span>
-              <input className={inputCls} inputMode="numeric" pattern="[0-9]*" required
-                value={fields.sec ?? ""} onChange={(e) => setFields({ ...fields, sec: e.target.value })} />
+              <span className="mb-1 block text-sm text-ink-tertiary">
+                {t("scorelog.seconds")}
+              </span>
+              <input
+                className={inputCls}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                required
+                value={fields.sec ?? ""}
+                onChange={(e) => setFields({ ...fields, sec: e.target.value })}
+              />
             </label>
           </div>
         ) : component?.scoreType === "rounds_reps" ? (
           <div className="flex gap-2">
             <label className="block flex-1">
-              <span className="mb-1 block text-sm text-ink-tertiary">{t("scorelog.rounds")}</span>
-              <input className={inputCls} inputMode="numeric" pattern="[0-9]*" required
-                value={fields.rounds ?? ""} onChange={(e) => setFields({ ...fields, rounds: e.target.value })} />
+              <span className="mb-1 block text-sm text-ink-tertiary">
+                {t("scorelog.rounds")}
+              </span>
+              <input
+                className={inputCls}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                required
+                value={fields.rounds ?? ""}
+                onChange={(e) =>
+                  setFields({ ...fields, rounds: e.target.value })
+                }
+              />
             </label>
             <label className="block flex-1">
-              <span className="mb-1 block text-sm text-ink-tertiary">{t("scorelog.reps")}</span>
-              <input className={inputCls} inputMode="numeric" pattern="[0-9]*"
-                value={fields.reps ?? ""} onChange={(e) => setFields({ ...fields, reps: e.target.value })} />
+              <span className="mb-1 block text-sm text-ink-tertiary">
+                {t("scorelog.reps")}
+              </span>
+              <input
+                className={inputCls}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={fields.reps ?? ""}
+                onChange={(e) => setFields({ ...fields, reps: e.target.value })}
+              />
             </label>
           </div>
         ) : component?.scoreType === "load" ? (
           <label className="block">
-            <span className="mb-1 block text-sm text-ink-tertiary">{t("scorelog.loadKg")}</span>
-            <input className={inputCls} inputMode="decimal" required
-              value={fields.load ?? ""} onChange={(e) => setFields({ ...fields, load: e.target.value })} />
+            <span className="mb-1 block text-sm text-ink-tertiary">
+              {t("scorelog.loadKg")}
+            </span>
+            <input
+              className={inputCls}
+              inputMode="decimal"
+              required
+              value={fields.load ?? ""}
+              onChange={(e) => setFields({ ...fields, load: e.target.value })}
+            />
           </label>
         ) : component?.scoreType === "reps" ? (
           <label className="block">
-            <span className="mb-1 block text-sm text-ink-tertiary">{t("scorelog.reps")}</span>
-            <input className={inputCls} inputMode="numeric" pattern="[0-9]*" required
-              value={fields.reps ?? ""} onChange={(e) => setFields({ ...fields, reps: e.target.value })} />
+            <span className="mb-1 block text-sm text-ink-tertiary">
+              {t("scorelog.reps")}
+            </span>
+            <input
+              className={inputCls}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              required
+              value={fields.reps ?? ""}
+              onChange={(e) => setFields({ ...fields, reps: e.target.value })}
+            />
           </label>
         ) : component?.scoreType === "distance" ? (
           <label className="block">
-            <span className="mb-1 block text-sm text-ink-tertiary">{t("scorelog.distanceM")}</span>
-            <input className={inputCls} inputMode="decimal" required
-              value={fields.distance ?? ""} onChange={(e) => setFields({ ...fields, distance: e.target.value })} />
+            <span className="mb-1 block text-sm text-ink-tertiary">
+              {t("scorelog.distanceM")}
+            </span>
+            <input
+              className={inputCls}
+              inputMode="decimal"
+              required
+              value={fields.distance ?? ""}
+              onChange={(e) =>
+                setFields({ ...fields, distance: e.target.value })
+              }
+            />
           </label>
         ) : component?.scoreType === "calories" ? (
           <label className="block">
-            <span className="mb-1 block text-sm text-ink-tertiary">{t("scorelog.calories")}</span>
-            <input className={inputCls} inputMode="numeric" pattern="[0-9]*" required
-              value={fields.calories ?? ""} onChange={(e) => setFields({ ...fields, calories: e.target.value })} />
+            <span className="mb-1 block text-sm text-ink-tertiary">
+              {t("scorelog.calories")}
+            </span>
+            <input
+              className={inputCls}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              required
+              value={fields.calories ?? ""}
+              onChange={(e) =>
+                setFields({ ...fields, calories: e.target.value })
+              }
+            />
           </label>
         ) : null}
 
@@ -233,7 +317,9 @@ export function ScoreDrawer({
             type="button"
             onClick={() => setIsRx(true)}
             className={`flex-1 rounded-md py-2 text-sm font-semibold ${
-              isRx ? "bg-accent-soft text-accent-ink" : "text-ink-tertiary"
+              isRx === true
+                ? "bg-accent-soft text-accent-ink"
+                : "text-ink-tertiary"
             }`}
           >
             {t("scorelog.rx")}
@@ -242,15 +328,24 @@ export function ScoreDrawer({
             type="button"
             onClick={() => setIsRx(false)}
             className={`flex-1 rounded-md py-2 text-sm font-semibold ${
-              !isRx ? "bg-info-soft text-info-ink" : "text-ink-tertiary"
+              isRx === false
+                ? "bg-info-soft text-info-ink"
+                : "text-ink-tertiary"
             }`}
           >
             {t("scorelog.scaled")}
           </button>
         </div>
+        {isRx == null ? (
+          <p className="text-xs text-warning-ink">
+            {t("scorelog.chooseDivision")}
+          </p>
+        ) : null}
 
         <label className="block">
-          <span className="mb-1 block text-sm text-ink-tertiary">{t("scorelog.comment")}</span>
+          <span className="mb-1 block text-sm text-ink-tertiary">
+            {t("scorelog.comment")}
+          </span>
           <input
             className="w-full rounded-lg border border-hairline bg-surface-raised px-3 py-2 text-sm"
             value={comment}
@@ -259,23 +354,61 @@ export function ScoreDrawer({
         </label>
 
         {result === "error" ? (
-          <p className="text-sm text-danger-ink">{t("scorelog.error")}</p>
+          <p aria-live="polite" className="text-sm text-danger-ink">
+            {t("scorelog.error")}
+          </p>
         ) : result === "pr" ? (
-          <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm font-semibold text-accent-ink">
+          <p
+            aria-live="polite"
+            className="rounded-lg bg-accent-soft px-3 py-2 text-sm font-semibold text-accent-ink"
+          >
             {t("scorelog.savedPr")}
           </p>
         ) : result === "ok" ? (
-          <p className="text-sm text-success-ink">{t("scorelog.saved")}</p>
+          <p aria-live="polite" className="text-sm text-success-ink">
+            {t("scorelog.saved")}
+          </p>
         ) : null}
 
-        <div className="flex gap-2">
-          <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
-            {t("common.cancel")}
-          </Button>
-          <Button type="submit" disabled={pending || !component} className="flex-1">
-            {pending ? t("common.loading") : t("scorelog.save")}
-          </Button>
-        </div>
+        {result === "ok" || result === "pr" ? (
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              className="flex-1"
+              onClick={onClose}
+            >
+              {t("common.done")}
+            </Button>
+            {successHref ? (
+              <Link
+                href={successHref}
+                onClick={onClose}
+                className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-canvas hover:brightness-110"
+              >
+                {t("scorelog.viewLeaderboard")}
+              </Link>
+            ) : null}
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              className="flex-1"
+              onClick={onClose}
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button
+              type="submit"
+              disabled={pending || !component || isRx == null}
+              className="flex-1"
+            >
+              {pending ? t("common.loading") : t("scorelog.save")}
+            </Button>
+          </div>
+        )}
       </form>
     </Drawer>
   );
@@ -283,7 +416,7 @@ export function ScoreDrawer({
 
 export function scoreTypeLabel(
   t: (key: LocaleKey, params?: Record<string, string | number>) => string,
-  scoreType: ScoreType
+  scoreType: ScoreType,
 ): string {
   return t(`score.${scoreType}` as LocaleKey);
 }

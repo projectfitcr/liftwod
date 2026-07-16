@@ -5,7 +5,7 @@ import { PendingCard } from "./PendingCard";
 export default async function PendingPage() {
   const profile = await getProfile();
   if (!profile) redirect("/sign-in");
-  if (profile.approved_at && profile.is_active) redirect("/today");
+  if (profile.approved_at && profile.is_active) redirect("/");
 
   return <PendingCard email={profile.email ?? ""} />;
 }

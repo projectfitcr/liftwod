@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { translate, type Language, type LocaleKey } from "@/lib/i18n";
 import { updatePreferredLanguage } from "@/lib/users/actions";
 
@@ -28,6 +34,10 @@ export function LanguageProvider({
 }) {
   const [language, setLanguageState] = useState<Language>(initialLanguage);
 
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
   const setLanguage = useCallback((next: Language) => {
     setLanguageState(next);
     void updatePreferredLanguage(next);
@@ -36,7 +46,7 @@ export function LanguageProvider({
   const t = useCallback(
     (key: LocaleKey, params?: Record<string, string | number>) =>
       translate(language, key, params),
-    [language]
+    [language],
   );
 
   return (

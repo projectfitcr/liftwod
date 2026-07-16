@@ -89,7 +89,8 @@
 
   --radius-lg: var(--radius-lg);
   --radius-sm: var(--radius-sm);
-  --font-sans: var(--font-sans);
+  --font-sans:
+    "IBM Plex Sans Thai Looped", ui-sans-serif, system-ui, sans-serif;
 }
 
 body {

@@ -7,7 +7,6 @@ import { Card } from "@/components/ui/Card";
 import { Field } from "@/components/ui/Field";
 import { Pill } from "@/components/ui/Pill";
 import { formatClockTime, formatDate } from "@/lib/format";
-import { isoDow } from "@/lib/dates";
 import {
   cancelSession,
   createTemplate,
