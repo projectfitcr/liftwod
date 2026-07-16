@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { requireStaff } from "@/lib/auth/guards";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getWodForDate } from "@/lib/wods/queries";
+import { getBoard } from "@/lib/whiteboard/queries";
 import { ClassRoster } from "./ClassRoster";
 
 export default async function CoachClassPage({
@@ -41,7 +42,10 @@ export default async function CoachClassPage({
     ]);
 
   const names = new Map(
-    (people ?? []).map((p) => [p.id, p.nickname || p.full_name || p.email || "—"])
+    (people ?? []).map((p) => [
+      p.id,
+      p.nickname || p.full_name || p.email || "—",
+    ]),
   );
   const avatars = new Map((people ?? []).map((p) => [p.id, p.avatar_url]));
   const attByMember = new Map((attendance ?? []).map((a) => [a.member_id, a]));
@@ -66,22 +70,33 @@ export default async function CoachClassPage({
       attendanceId: a.id,
     }));
 
-  const rosterIds = new Set([...bookedMemberIds, ...walkIns.map((w) => w.memberId)]);
+  const rosterIds = new Set([
+    ...bookedMemberIds,
+    ...walkIns.map((w) => w.memberId),
+  ]);
   const addable = (people ?? [])
     .filter((p) => !rosterIds.has(p.id))
     .map((p) => ({ id: p.id, name: names.get(p.id) ?? "—" }));
 
   // The day's WOD (staff see hidden ones) for on-behalf score entry.
-  const wod = await getWodForDate(session.session_date);
+  const [wod, board] = await Promise.all([
+    getWodForDate(session.session_date),
+    getBoard(session.session_date),
+  ]);
   const scorableComponents = (wod?.components ?? [])
     .filter((c) => c.scoreType !== "none")
-    .map((c) => ({ id: c.id, scoreType: c.scoreType, kind: c.kind, title: c.title }));
+    .map((c) => ({
+      id: c.id,
+      scoreType: c.scoreType,
+      kind: c.kind,
+      title: c.title,
+    }));
   const componentIds = scorableComponents.map((c) => c.id);
   const { data: dayResults } = componentIds.length
     ? await supabase
         .from("results")
         .select(
-          "component_id, member_id, is_rx, is_pr, comment, time_seconds, rounds, reps, load_kg, distance_m, calories"
+          "component_id, member_id, is_rx, is_pr, comment, time_seconds, rounds, reps, load_kg, distance_m, calories",
         )
         .in("component_id", componentIds)
     : { data: [] };
@@ -100,6 +115,8 @@ export default async function CoachClassPage({
       walkIns={walkIns}
       addable={addable}
       scorableComponents={scorableComponents}
+      wod={wod}
+      board={board}
       dayResults={(dayResults ?? []).map((r) => ({
         ...r,
         load_kg: r.load_kg != null ? Number(r.load_kg) : null,

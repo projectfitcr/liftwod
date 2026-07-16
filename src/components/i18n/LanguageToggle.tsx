@@ -6,9 +6,14 @@ export function LanguageToggle() {
   const { language, setLanguage } = useLanguage();
 
   return (
-    <div className="flex items-center rounded-full border border-hairline bg-surface p-0.5 text-xs font-medium">
+    <div
+      role="group"
+      aria-label={language === "th" ? "ภาษา" : "Language"}
+      className="flex items-center rounded-full border border-hairline bg-surface p-0.5 text-xs font-medium"
+    >
       <button
         type="button"
+        aria-pressed={language === "th"}
         onClick={() => setLanguage("th")}
         className={`rounded-full px-2.5 py-1 transition-colors ${
           language === "th"
@@ -20,6 +25,7 @@ export function LanguageToggle() {
       </button>
       <button
         type="button"
+        aria-pressed={language === "en"}
         onClick={() => setLanguage("en")}
         className={`rounded-full px-2.5 py-1 transition-colors ${
           language === "en"

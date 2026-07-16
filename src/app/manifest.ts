@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "LIFTwod",
     description: "Project Fit Chiang Rai — schedule, WODs, scores, membership",
     lang: "th",
-    start_url: "/today",
+    start_url: "/",
     display: "standalone",
     background_color: "#0b0b0f",
     theme_color: "#0b0b0f",

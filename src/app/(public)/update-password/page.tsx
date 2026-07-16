@@ -26,7 +26,7 @@ export default function UpdatePasswordPage() {
       setBusy(false);
       return;
     }
-    router.push("/today");
+    router.push("/");
     router.refresh();
   }
 

@@ -42,7 +42,7 @@ function SignUpForm() {
       setBusy(false);
       return;
     }
-    router.push("/today"); // pending accounts get bounced to /pending by the guard
+    router.push("/"); // pending accounts get bounced to /pending by the guard
     router.refresh();
   }
 

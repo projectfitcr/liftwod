@@ -1,13 +1,17 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import { formatClockTime, formatDate } from "@/lib/format";
-import { bookClass, cancelBooking, type BookingResult } from "@/lib/bookings/actions";
+import {
+  bookClass,
+  cancelBooking,
+  type BookingResult,
+} from "@/lib/bookings/actions";
 import { checkIn } from "@/lib/attendance/actions";
 import type { Language, LocaleKey } from "@/lib/i18n";
 
@@ -28,7 +32,7 @@ export type SessionView = {
 export function bookingMessage(
   t: (key: LocaleKey, params?: Record<string, string | number>) => string,
   language: Language,
-  res: BookingResult
+  res: BookingResult,
 ): string {
   const meta = (res.meta ?? {}) as Record<string, string | number>;
   return t(`booking.code.${res.code}` as LocaleKey, {
@@ -42,9 +46,13 @@ export function bookingMessage(
 export function ClassCard({
   session,
   staffLink = false,
+  nowIso,
+  featured = false,
 }: {
   session: SessionView;
   staffLink?: boolean;
+  nowIso: string;
+  featured?: boolean;
 }) {
   const { t, language } = useLanguage();
   const router = useRouter();
@@ -55,7 +63,11 @@ export function ClassCard({
     visitsLeft?: number;
   } | null>(null);
 
-  const now = Date.now();
+  const [now, setNow] = useState(() => new Date(nowIso).getTime());
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
   const past = new Date(session.starts_at).getTime() <= now;
   const cancelled = session.status === "cancelled";
   const full = session.booked >= session.capacity;
@@ -80,11 +92,11 @@ export function ClassCard({
 
   return (
     <div
-      className={`rounded-xl border border-hairline bg-surface p-3 shadow-[var(--shadow-card)] ${
-        cancelled || past ? "opacity-60" : ""
-      }`}
+      className={`rounded-xl border bg-surface p-4 shadow-[var(--shadow-card)] ${
+        featured ? "border-primary/50" : "border-hairline"
+      } ${cancelled || past ? "opacity-60" : ""}`}
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-center gap-3">
           <span className="whitespace-nowrap text-base font-semibold tabular-nums">
             {formatClockTime(session.starts_at)}
@@ -99,7 +111,7 @@ export function ClassCard({
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
           {cancelled ? (
             <Pill tone="danger">{t("schedule.cancelledSession")}</Pill>
           ) : (
@@ -132,7 +144,11 @@ export function ClassCard({
 
               {!session.checkedIn && session.myBooking ? (
                 <>
-                  <Pill tone={session.myBooking.status === "booked" ? "success" : "info"}>
+                  <Pill
+                    tone={
+                      session.myBooking.status === "booked" ? "success" : "info"
+                    }
+                  >
                     {session.myBooking.status === "booked"
                       ? t("booking.bookedPill")
                       : t("booking.waitlistedPill")}
@@ -141,7 +157,9 @@ export function ClassCard({
                     <Button
                       variant="ghost"
                       disabled={pending}
-                      onClick={() => run(() => cancelBooking(session.myBooking!.id))}
+                      onClick={() =>
+                        run(() => cancelBooking(session.myBooking!.id))
+                      }
                     >
                       {t("booking.cancel")}
                     </Button>
@@ -164,7 +182,9 @@ export function ClassCard({
       {message ? (
         <p
           className={`mt-2 rounded-lg px-3 py-2 text-xs ${
-            message.ok ? "bg-success-soft text-success-ink" : "bg-warning-soft text-warning-ink"
+            message.ok
+              ? "bg-success-soft text-success-ink"
+              : "bg-warning-soft text-warning-ink"
           }`}
         >
           {message.text}
@@ -177,7 +197,7 @@ export function ClassCard({
       {staffLink && !cancelled ? (
         <Link
           href={`/coach/class/${session.id}`}
-          className="mt-2 inline-block text-xs font-medium text-primary-ink hover:underline"
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-ink hover:underline"
         >
           {t("coach.runClass")}
         </Link>

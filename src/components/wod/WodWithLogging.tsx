@@ -51,26 +51,40 @@ export function WodWithLogging({
           canLog
             ? (componentId) => {
                 const mine = myResults[componentId];
-                const component = wod.components.find((c) => c.id === componentId);
+                const component = wod.components.find(
+                  (c) => c.id === componentId,
+                );
                 return (
                   <div className="flex items-center gap-2">
                     {mine && component ? (
                       <>
                         <span className="text-sm font-semibold tabular-nums">
                           {t("scorelog.yourScore", {
-                            score: formatScore(language, component.scoreType, mine),
+                            score: formatScore(
+                              language,
+                              component.scoreType,
+                              mine,
+                            ),
                           })}
                         </span>
-                        {mine.is_pr ? <Pill tone="accent">{t("whiteboard.pr")}</Pill> : null}
+                        {mine.is_pr ? (
+                          <Pill tone="accent">{t("whiteboard.pr")}</Pill>
+                        ) : null}
                         <Pill tone={mine.is_rx ? "accent" : "info"}>
                           {mine.is_rx ? t("scorelog.rx") : t("scorelog.scaled")}
                         </Pill>
-                        <Button variant="ghost" onClick={() => setOpenComponent(componentId)}>
+                        <Button
+                          variant="ghost"
+                          onClick={() => setOpenComponent(componentId)}
+                        >
                           {t("scorelog.edit")}
                         </Button>
                       </>
                     ) : (
-                      <Button variant="secondary" onClick={() => setOpenComponent(componentId)}>
+                      <Button
+                        variant="secondary"
+                        onClick={() => setOpenComponent(componentId)}
+                      >
                         {t("scorelog.log")}
                       </Button>
                     )}
@@ -88,6 +102,7 @@ export function WodWithLogging({
           initialComponentId={openComponent}
           existing={myResults}
           date={date}
+          successHref={`/whiteboard?date=${date}`}
         />
       ) : null}
     </>

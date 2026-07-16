@@ -23,7 +23,10 @@ export function Button({
   variant?: Variant;
   size?: "sm" | "md";
 }) {
-  const sizing = size === "sm" ? "px-2.5 py-1 text-xs" : "px-4 py-2 text-sm";
+  const sizing =
+    size === "sm"
+      ? "min-h-10 px-3 py-1.5 text-xs"
+      : "min-h-11 px-4 py-2 text-sm";
   return (
     <button
       className={`inline-flex items-center justify-center gap-1.5 rounded-lg transition-colors disabled:cursor-not-allowed ${sizing} ${styles[variant]} ${className}`}
