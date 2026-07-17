@@ -28,7 +28,7 @@ export function BottomNav({ role }: { role: "admin" | "coach" | "member" }) {
   return (
     <nav
       aria-label={t("nav.primary")}
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-hairline bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur"
+      className="fixed inset-x-0 bottom-0 z-30 isolate border-t border-hairline bg-surface pb-[env(safe-area-inset-bottom)] [backface-visibility:hidden] [transform:translate3d(0,0,0)] [will-change:transform]"
     >
       <div className="mx-auto flex max-w-5xl">
         {items.map((item) => {

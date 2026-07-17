@@ -265,7 +265,7 @@
   "scorelog.seconds": "sec",
   "scorelog.rounds": "Rounds",
   "scorelog.reps": "Reps",
-  "scorelog.loadKg": "Load (kg)",
+  "scorelog.loadLb": "Load (lb)",
   "scorelog.distanceM": "Distance (m)",
   "scorelog.calories": "Calories",
   "scorelog.rx": "Rx",

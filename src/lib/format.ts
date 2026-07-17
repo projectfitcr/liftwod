@@ -1,6 +1,27 @@
 import type { Language } from "@/lib/i18n";
 
 const LOCALE: Record<Language, string> = { en: "en-GB", th: "th-TH" };
+const POUNDS_PER_KILOGRAM = 2.2046226218;
+
+/** The database keeps loads in kilograms; the member-facing app uses pounds. */
+export function kilogramsToPounds(kilograms: number): number {
+  return kilograms * POUNDS_PER_KILOGRAM;
+}
+
+/** Round persisted conversions enough to avoid floating-point noise. */
+export function poundsToKilograms(pounds: number): number {
+  return Math.round((pounds / POUNDS_PER_KILOGRAM) * 1000) / 1000;
+}
+
+export function loadInputValue(kilograms: number): string {
+  return String(Math.round(kilogramsToPounds(kilograms) * 100) / 100);
+}
+
+export function formatLoadPounds(language: Language, kilograms: number): string {
+  return `${kilogramsToPounds(kilograms).toLocaleString(LOCALE[language], {
+    maximumFractionDigits: 1,
+  })} lb`;
+}
 
 /** Gregorian years in both languages for v1 (Buddhist-era display deferred). */
 export function formatDate(language: Language, iso: string | null | undefined): string {
@@ -50,7 +71,7 @@ export function formatMMSS(totalSeconds: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-/** Score rendering per score type: 3:45 · 5+12 · 80 kg · 42 · 1,000 m · 50 cal. */
+/** Score rendering per score type: 3:45 · 5+12 · 176.4 lb · 42 · 1,000 m · 50 cal. */
 export function formatScore(
   language: Language,
   scoreType: string,
@@ -69,7 +90,9 @@ export function formatScore(
     case "rounds_reps":
       return r.rounds != null ? `${r.rounds}+${r.reps ?? 0}` : "—";
     case "load":
-      return r.load_kg != null ? `${formatNumber(language, Number(r.load_kg))} kg` : "—";
+      return r.load_kg != null
+        ? formatLoadPounds(language, Number(r.load_kg))
+        : "—";
     case "reps":
       return r.reps != null ? formatNumber(language, r.reps) : "—";
     case "distance":
