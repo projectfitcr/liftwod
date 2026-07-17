@@ -1,32 +1,33 @@
 import { requireUser } from "@/lib/auth/guards";
 import { getSessionViews } from "@/lib/schedule/queries";
-import { addDays, bangkokToday, weekStartOf } from "@/lib/dates";
-import { WeekSchedule } from "./WeekSchedule";
+import { addDays, bangkokToday } from "@/lib/dates";
+import { ScheduleView } from "./ScheduleView";
 
 export default async function SchedulePage({
   searchParams,
 }: {
-  searchParams: Promise<{ week?: string }>;
+  searchParams: Promise<{ start?: string; week?: string }>;
 }) {
   const profile = await requireUser();
-  const { week } = await searchParams;
+  const { start, week } = await searchParams;
 
   const today = bangkokToday();
-  const weekStart = weekStartOf(
-    /^\d{4}-\d{2}-\d{2}$/.test(week ?? "") ? week! : today,
-  );
+  const requestedStart = start ?? week;
+  const startDate = /^\d{4}-\d{2}-\d{2}$/.test(requestedStart ?? "")
+    ? requestedStart!
+    : today;
   const days = await getSessionViews(
-    weekStart,
-    addDays(weekStart, 6),
+    startDate,
+    addDays(startDate, 13),
     profile.id,
   );
 
   return (
-    <WeekSchedule
-      weekStart={weekStart}
+    <ScheduleView
+      userId={profile.id}
+      startDate={startDate}
       today={today}
       days={days}
-      currentWeekStart={weekStartOf(today)}
       isStaff={profile.role === "admin" || profile.role === "coach"}
       nowIso={new Date().toISOString()}
     />

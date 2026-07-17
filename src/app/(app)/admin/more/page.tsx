@@ -5,9 +5,9 @@ import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Card } from "@/components/ui/Card";
 
 const links = [
-  ["/admin/users", "admin.more.users"],
-  ["/admin/memberships", "admin.more.memberships"],
+  ["/admin/people", "admin.more.people"],
   ["/admin/plans", "admin.more.plans"],
+  ["/coach/exercises", "admin.more.exercises"],
   ["/profile", "admin.more.profile"],
 ] as const;
 

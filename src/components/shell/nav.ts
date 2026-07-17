@@ -44,10 +44,10 @@ export const ADMIN_NAV: NavItem[] = [
     exact: true,
   },
   {
-    href: "/coach/members",
+    href: "/admin/people",
     labelKey: "nav.people",
     icon: "users",
-    match: ["/coach/members", "/admin/users", "/admin/memberships"],
+    match: ["/admin/people", "/coach/members", "/admin/users", "/admin/memberships"],
   },
   {
     href: "/admin/schedule",
@@ -60,7 +60,7 @@ export const ADMIN_NAV: NavItem[] = [
     href: "/admin/more",
     labelKey: "nav.more",
     icon: "menu",
-    match: ["/admin/more", "/admin/plans"],
+    match: ["/admin/more", "/admin/plans", "/coach/exercises"],
   },
 ];
 

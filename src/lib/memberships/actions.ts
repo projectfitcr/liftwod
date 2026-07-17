@@ -9,6 +9,7 @@ type PlanType = Database["public"]["Enums"]["plan_type"];
 type PaymentMethod = Database["public"]["Enums"]["payment_method"];
 
 function revalidate(membershipId?: string) {
+  revalidatePath("/admin/people");
   revalidatePath("/admin/memberships");
   if (membershipId) revalidatePath(`/admin/memberships/${membershipId}`);
 }

@@ -35,11 +35,13 @@ export function MembershipDetail({
   memberName,
   payments,
   holds,
+  embedded = false,
 }: {
   summary: Summary;
   memberName: string;
   payments: Payment[];
   holds: Hold[];
+  embedded?: boolean;
 }) {
   const { t, language } = useLanguage();
   const [pending, startTransition] = useTransition();
@@ -88,11 +90,20 @@ export function MembershipDetail({
   return (
     <div className="space-y-4">
       <div>
-        <Link href="/admin/memberships" className="text-xs text-ink-tertiary hover:underline">
-          ← {t("admin.memberships.title")}
-        </Link>
-        <div className="mt-1 flex items-center justify-between gap-2">
-          <h1 className="break-words text-xl font-semibold">{memberName}</h1>
+        {!embedded ? (
+          <Link href="/admin/people" className="text-xs text-ink-tertiary hover:underline">
+            ← {t("admin.people.title")}
+          </Link>
+        ) : null}
+        <div className={`${embedded ? "" : "mt-1"} flex items-center justify-between gap-2`}>
+          <h1 className={`break-words font-semibold ${embedded ? "text-base" : "text-xl"}`}>
+            {embedded
+              ? planName(language, {
+                  name_en: summary.plan_name_en,
+                  name_th: summary.plan_name_th,
+                })
+              : memberName}
+          </h1>
           {summary.status ? <StatusPill status={summary.status} /> : null}
         </div>
       </div>
@@ -113,7 +124,7 @@ export function MembershipDetail({
           <PlanRule
             plan={{
               plan_type: summary.plan_type!,
-              duration_months: null,
+              duration_months: summary.duration_months,
               weekly_visit_limit: summary.weekly_visit_limit,
               visit_count: summary.visit_count,
             }}
