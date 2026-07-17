@@ -90,7 +90,8 @@
   --radius-lg: var(--radius-lg);
   --radius-sm: var(--radius-sm);
   --font-sans:
-    "IBM Plex Sans Thai Looped", ui-sans-serif, system-ui, sans-serif;
+    "TH SarabunPSK", "TH Sarabun New", Tahoma, ui-sans-serif, system-ui,
+    sans-serif;
 }
 
 body {

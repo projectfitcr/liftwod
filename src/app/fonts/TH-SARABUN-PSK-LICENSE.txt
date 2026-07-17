@@ -1,0 +1,20 @@
+TH SarabunPSK Font Computer Program License
+
+Copyright (c) 2006 by the Department of Intellectual Property (DIP),
+Ministry of Commerce and the Software Industry Promotion Agency
+(Public Organization) (SIPA). Typeface and data copyright Suppakij
+Chalermlarp / PSK Design LTD.
+
+The embedded font license permits the font to be used without charge and to
+be reproduced, studied, adapted, and distributed. The original or adapted
+font may not be sold by itself, except when bundled with a computer program.
+
+Adaptations require written notice to DIP and SIPA, may not use the reserved
+font names without permission, and must be released under the same terms.
+
+The font and related files are provided as-is, without warranty or technical
+support.
+
+Reserved family names included here:
+TH Sarabun PSK, TH Sarabun PSK Italic, TH Sarabun PSK Bold, and
+TH Sarabun PSK Bold Italic.
