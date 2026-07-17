@@ -34,33 +34,39 @@ export type WodView = {
 export function WodCard({
   wod,
   hidden = false,
+  showHeader = true,
+  className = "",
   renderScoreAction,
 }: {
   wod: WodView;
   hidden?: boolean;
+  showHeader?: boolean;
+  className?: string;
   renderScoreAction?: (componentId: string) => React.ReactNode;
 }) {
   const { t, language } = useLanguage();
 
   return (
-    <Card className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <p className="break-words text-base font-semibold">{wod.title}</p>
-        {wod.benchmarkName ? (
-          <Pill tone="accent">
-            {t("wod.benchmark")} · {wod.benchmarkName}
-          </Pill>
-        ) : null}
-        {hidden ? (
-          <Pill tone="warning">
-            {!wod.published
-              ? t("wod.draft")
-              : t("wod.hiddenUntil", {
-                  time: formatDateTime(language, wod.revealAt),
-                })}
-          </Pill>
-        ) : null}
-      </div>
+    <Card className={`space-y-3 ${className}`}>
+      {showHeader ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="break-words text-base font-semibold">{wod.title}</p>
+          {wod.benchmarkName ? (
+            <Pill tone="accent">
+              {t("wod.benchmark")} · {wod.benchmarkName}
+            </Pill>
+          ) : null}
+          {hidden ? (
+            <Pill tone="warning">
+              {!wod.published
+                ? t("wod.draft")
+                : t("wod.hiddenUntil", {
+                    time: formatDateTime(language, wod.revealAt),
+                  })}
+            </Pill>
+          ) : null}
+        </div>
+      ) : null}
 
       {wod.components.map((c) => (
         <div key={c.id} className="rounded-lg border border-hairline bg-surface-raised p-3">

@@ -4,6 +4,7 @@ import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
+import { WodCard } from "@/components/wod/WodCard";
 import { formatScore } from "@/lib/format";
 import type { Board } from "@/lib/whiteboard/queries";
 import type { LocaleKey } from "@/lib/i18n";
@@ -21,14 +22,44 @@ export function WhiteboardBoard({
 
   return (
     <div className={tv ? "space-y-8" : "space-y-4"}>
-      <div className="flex flex-wrap items-center gap-2">
-        <h2 className={`font-bold ${tv ? "text-4xl" : "text-lg"}`}>{board.wodTitle}</h2>
-        {board.benchmarkName ? (
-          <Pill tone="accent">
-            {t("wod.benchmark")} · {board.benchmarkName}
-          </Pill>
-        ) : null}
-      </div>
+      {tv ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-4xl font-bold">{board.wodTitle}</h2>
+          {board.benchmarkName ? (
+            <Pill tone="accent">
+              {t("wod.benchmark")} · {board.benchmarkName}
+            </Pill>
+          ) : null}
+        </div>
+      ) : (
+        <details className="group rounded-xl border border-hairline bg-surface shadow-[var(--shadow-card)]">
+          <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
+            <span className="flex min-w-0 flex-wrap items-center gap-2">
+              <span className="break-words text-lg font-bold">
+                {board.wodTitle}
+              </span>
+              {board.benchmarkName ? (
+                <Pill tone="accent">
+                  {t("wod.benchmark")} · {board.benchmarkName}
+                </Pill>
+              ) : null}
+            </span>
+            <span
+              aria-hidden="true"
+              className="shrink-0 text-xl text-ink-tertiary transition-transform group-open:rotate-180"
+            >
+              ⌄
+            </span>
+          </summary>
+          <div className="border-t border-hairline p-4">
+            <WodCard
+              wod={board.wod}
+              showHeader={false}
+              className="rounded-none border-0 bg-transparent p-0 shadow-none"
+            />
+          </div>
+        </details>
+      )}
 
       {board.components.map((c) => (
         <Card key={c.id} className={tv ? "p-6" : ""}>

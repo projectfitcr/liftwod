@@ -1,6 +1,7 @@
 import "server-only";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getWodForDate } from "@/lib/wods/queries";
+import type { WodView } from "@/components/wod/WodCard";
 import type { Database } from "@/lib/supabase/database.types";
 
 type ScoreType = Database["public"]["Enums"]["score_type"];
@@ -32,6 +33,7 @@ export type BoardComponent = {
 };
 
 export type Board = {
+  wod: WodView;
   wodTitle: string;
   benchmarkName: string | null;
   components: BoardComponent[];
@@ -65,7 +67,12 @@ export async function getBoard(date: string): Promise<Board | null> {
   const scored = wod.components.filter((c) => c.scoreType !== "none");
   const ids = scored.map((c) => c.id);
   if (ids.length === 0) {
-    return { wodTitle: wod.title, benchmarkName: wod.benchmarkName, components: [] };
+    return {
+      wod,
+      wodTitle: wod.title,
+      benchmarkName: wod.benchmarkName,
+      components: [],
+    };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -120,5 +127,10 @@ export async function getBoard(date: string): Promise<Board | null> {
     };
   });
 
-  return { wodTitle: wod.title, benchmarkName: wod.benchmarkName, components };
+  return {
+    wod,
+    wodTitle: wod.title,
+    benchmarkName: wod.benchmarkName,
+    components,
+  };
 }

@@ -12,6 +12,7 @@ import {
   createTemplate,
   setTemplateActive,
   updateSessionCapacity,
+  updateSessionCoach,
 } from "@/lib/schedule/actions";
 import type { LocaleKey } from "@/lib/i18n";
 import type { Database } from "@/lib/supabase/database.types";
@@ -44,6 +45,7 @@ export function ScheduleAdmin({
   const [capacity, setCapacity] = useState("12");
   const [coachId, setCoachId] = useState("");
   const [capEdits, setCapEdits] = useState<Record<string, string>>({});
+  const [coachEdits, setCoachEdits] = useState<Record<string, string>>({});
 
   const staffName = new Map(staff.map((s) => [s.id, s.full_name]));
 
@@ -212,8 +214,11 @@ export function ScheduleAdmin({
           ) : (
             <ul className="divide-y divide-hairline">
               {sessions.map((s) => (
-                <li key={s.id} className="flex items-center justify-between gap-3 py-2.5">
-                  <div className="min-w-0">
+                <li
+                  key={s.id}
+                  className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0 flex-1">
                     <p className="break-words text-sm">
                       <span className="whitespace-nowrap">
                         {formatDate(language, s.session_date)}{" "}
@@ -230,9 +235,45 @@ export function ScheduleAdmin({
                       {t("schedule.spots", { booked: s.booked, capacity: s.capacity })}
                       {s.waiting > 0 ? ` · ${t("schedule.waiting", { count: s.waiting })}` : ""}
                     </p>
+                    <label className="mt-2 flex max-w-sm items-center gap-2">
+                      <span className="shrink-0 text-xs font-medium text-ink-secondary">
+                        {t("admin.schedule.coach")}
+                      </span>
+                      <select
+                        className="min-w-0 flex-1 rounded-lg border border-hairline bg-surface-raised px-2.5 py-1.5 text-sm disabled:opacity-60"
+                        value={coachEdits[s.id] ?? s.coach_id ?? ""}
+                        disabled={pending}
+                        onChange={(event) => {
+                          const nextCoachId = event.target.value;
+                          setCoachEdits((current) => ({
+                            ...current,
+                            [s.id]: nextCoachId,
+                          }));
+                          startTransition(async () => {
+                            const result = await updateSessionCoach(
+                              s.id,
+                              nextCoachId || null,
+                            );
+                            if (!result.ok) {
+                              setCoachEdits((current) => ({
+                                ...current,
+                                [s.id]: s.coach_id ?? "",
+                              }));
+                            }
+                          });
+                        }}
+                      >
+                        <option value="">{t("coach.class.noCoach")}</option>
+                        {staff.map((person) => (
+                          <option key={person.id} value={person.id}>
+                            {person.full_name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
                   </div>
                   {s.status === "scheduled" ? (
-                    <div className="flex shrink-0 items-center gap-1.5">
+                    <div className="flex shrink-0 flex-wrap items-center gap-1.5 sm:justify-end">
                       <input
                         type="number"
                         min={1}
