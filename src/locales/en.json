@@ -135,6 +135,7 @@
   "schedule.listView": "List",
   "schedule.calendarView": "Calendar",
   "schedule.today": "Today",
+  "schedule.viewWorkout": "View workout",
   "schedule.selectedSession": "Selected session",
   "schedule.noClassesInRange": "No classes are scheduled in these 14 days.",
   "booking.book": "Book",

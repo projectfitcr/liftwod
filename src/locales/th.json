@@ -135,6 +135,7 @@
   "schedule.listView": "รายการ",
   "schedule.calendarView": "ปฏิทิน",
   "schedule.today": "วันนี้",
+  "schedule.viewWorkout": "ดูเวิร์กเอาต์",
   "schedule.selectedSession": "คลาสที่เลือก",
   "schedule.noClassesInRange": "ไม่มีคลาสในช่วง 14 วันนี้",
   "booking.book": "จองคลาส",

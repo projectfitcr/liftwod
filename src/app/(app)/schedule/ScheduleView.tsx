@@ -223,14 +223,17 @@ function ScheduleDayHeading({
 
   return (
     <section>
-      <h2
-        className={`mb-2 text-sm font-medium ${
-          date === today ? "text-primary-ink" : "text-ink-secondary"
-        }`}
-      >
-        {t(`day.${isoDow(date)}` as LocaleKey)} {formatDate(language, date)}
-        {date === today ? ` · ${t("schedule.today")}` : ""}
-      </h2>
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <h2
+          className={`text-sm font-medium ${
+            date === today ? "text-primary-ink" : "text-ink-secondary"
+          }`}
+        >
+          {t(`day.${isoDow(date)}` as LocaleKey)} {formatDate(language, date)}
+          {date === today ? ` · ${t("schedule.today")}` : ""}
+        </h2>
+        <WorkoutLink date={date} />
+      </div>
       {children}
     </section>
   );
@@ -259,10 +262,19 @@ function CalendarDay({
       }`}
     >
       <div className="mb-2 border-b border-hairline pb-1.5">
-        <p className={`text-xs font-semibold ${isToday ? "text-primary-ink" : "text-ink-secondary"}`}>
-          {t(`day.${isoDow(date)}` as LocaleKey)}
-        </p>
-        <p className="text-[11px] text-ink-tertiary">{formatDate(language, date)}</p>
+        <div className="flex items-start justify-between gap-1.5">
+          <div>
+            <p
+              className={`text-xs font-semibold ${
+                isToday ? "text-primary-ink" : "text-ink-secondary"
+              }`}
+            >
+              {t(`day.${isoDow(date)}` as LocaleKey)}
+            </p>
+            <p className="text-[11px] text-ink-tertiary">{formatDate(language, date)}</p>
+          </div>
+          <WorkoutLink date={date} compact />
+        </div>
       </div>
       {sessions.length === 0 ? (
         <p className="text-[11px] text-ink-tertiary">{t("schedule.noClasses")}</p>
@@ -307,5 +319,20 @@ function CalendarDay({
         </div>
       )}
     </section>
+  );
+}
+
+function WorkoutLink({ date, compact = false }: { date: string; compact?: boolean }) {
+  const { t } = useLanguage();
+
+  return (
+    <Link
+      href={`/wod/${date}`}
+      className={`inline-flex min-h-10 shrink-0 items-center justify-end text-right font-semibold leading-tight text-primary-ink hover:underline ${
+        compact ? "max-w-20 text-[10px]" : "text-xs"
+      }`}
+    >
+      {t("schedule.viewWorkout")} →
+    </Link>
   );
 }
