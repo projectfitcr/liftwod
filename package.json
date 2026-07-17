@@ -9,6 +9,7 @@
     "lint": "eslint",
     "seed:users": "node --experimental-strip-types scripts/seed-users.ts",
     "demo:seed": "node --experimental-strip-types scripts/seed-demo.ts",
+    "demo:avatars": "node --experimental-strip-types scripts/seed-demo-avatars.ts",
     "demo:clear": "node --experimental-strip-types scripts/clear-demo.ts"
   },
   "dependencies": {

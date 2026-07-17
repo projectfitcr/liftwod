@@ -9,6 +9,7 @@ import { Pill } from "@/components/ui/Pill";
 import { formatClockTime, formatDate } from "@/lib/format";
 import { checkIn, undoCheckIn } from "@/lib/attendance/actions";
 import { Avatar } from "@/components/ui/Avatar";
+import { Icon } from "@/components/shell/Icon";
 import { bookingMessage } from "@/components/schedule/ClassCard";
 import { updateSessionCoach } from "@/lib/schedule/actions";
 import {
@@ -84,6 +85,7 @@ export function ClassRoster({
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
   const [selectedCoachId, setSelectedCoachId] = useState(session.coachId ?? "");
+  const [editingCoach, setEditingCoach] = useState(false);
   const [coachMessage, setCoachMessage] = useState<"saved" | "error" | null>(null);
   const [walkInId, setWalkInId] = useState("");
   const [scoring, setScoring] = useState<{
@@ -120,14 +122,17 @@ export function ClassRoster({
     });
   }
 
-  function changeCoach(nextCoachId: string) {
-    const previousCoachId = selectedCoachId;
-    setSelectedCoachId(nextCoachId);
+  function saveCoach() {
+    const previousCoachId = session.coachId ?? "";
     setCoachMessage(null);
     startTransition(async () => {
-      const result = await updateSessionCoach(session.id, nextCoachId || null);
+      const result = await updateSessionCoach(
+        session.id,
+        selectedCoachId || null,
+      );
       if (result.ok) {
         setCoachMessage("saved");
+        setEditingCoach(false);
         router.refresh();
       } else {
         setSelectedCoachId(previousCoachId);
@@ -161,24 +166,62 @@ export function ClassRoster({
             capacity: session.capacity,
           })}
         </p>
-        <label className="mt-3 block max-w-sm">
+        <div className="mt-3 max-w-sm">
           <span className="mb-1 block text-xs font-medium text-ink-secondary">
             {t("coach.class.assignedCoach")}
           </span>
-          <select
-            className="w-full rounded-lg border border-hairline bg-surface-raised px-3 py-2 text-sm disabled:opacity-60"
-            value={selectedCoachId}
-            disabled={pending}
-            onChange={(event) => changeCoach(event.target.value)}
-          >
-            <option value="">{t("coach.class.noCoach")}</option>
-            {staff.map((person) => (
-              <option key={person.id} value={person.id}>
-                {person.name}
-              </option>
-            ))}
-          </select>
-        </label>
+          {editingCoach ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                aria-label={t("coach.class.assignedCoach")}
+                className="min-h-10 min-w-0 flex-1 rounded-lg border border-hairline bg-surface-raised px-3 py-2 text-sm disabled:opacity-60"
+                value={selectedCoachId}
+                disabled={pending}
+                onChange={(event) => setSelectedCoachId(event.target.value)}
+              >
+                <option value="">{t("coach.class.noCoach")}</option>
+                {staff.map((person) => (
+                  <option key={person.id} value={person.id}>
+                    {person.name}
+                  </option>
+                ))}
+              </select>
+              <Button size="sm" disabled={pending} onClick={saveCoach}>
+                {t("common.save")}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={pending}
+                onClick={() => {
+                  setSelectedCoachId(session.coachId ?? "");
+                  setCoachMessage(null);
+                  setEditingCoach(false);
+                }}
+              >
+                {t("common.cancel")}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex min-h-10 items-center justify-between gap-3 rounded-lg border border-hairline bg-surface-raised px-3 py-1.5">
+              <span className="min-w-0 truncate text-sm font-medium">
+                {staff.find((person) => person.id === selectedCoachId)?.name ??
+                  t("coach.class.noCoach")}
+              </span>
+              <button
+                type="button"
+                className="inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg text-ink-secondary transition-colors hover:bg-row-hover hover:text-ink-primary"
+                aria-label={t("coach.class.editCoach")}
+                onClick={() => {
+                  setCoachMessage(null);
+                  setEditingCoach(true);
+                }}
+              >
+                <Icon name="edit" className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+        </div>
         <p aria-live="polite" className="mt-1 min-h-4 text-xs text-ink-tertiary">
           {pending
             ? t("common.loading")

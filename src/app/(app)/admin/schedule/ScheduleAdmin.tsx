@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Field } from "@/components/ui/Field";
 import { Pill } from "@/components/ui/Pill";
+import { Icon } from "@/components/shell/Icon";
 import { formatClockTime, formatDate } from "@/lib/format";
 import {
   cancelSession,
@@ -46,6 +47,7 @@ export function ScheduleAdmin({
   const [coachId, setCoachId] = useState("");
   const [capEdits, setCapEdits] = useState<Record<string, string>>({});
   const [coachEdits, setCoachEdits] = useState<Record<string, string>>({});
+  const [editingCoachId, setEditingCoachId] = useState<string | null>(null);
 
   const staffName = new Map(staff.map((s) => [s.id, s.full_name]));
 
@@ -235,42 +237,91 @@ export function ScheduleAdmin({
                       {t("schedule.spots", { booked: s.booked, capacity: s.capacity })}
                       {s.waiting > 0 ? ` · ${t("schedule.waiting", { count: s.waiting })}` : ""}
                     </p>
-                    <label className="mt-2 flex max-w-sm items-center gap-2">
+                    <div className="mt-2 max-w-sm">
                       <span className="shrink-0 text-xs font-medium text-ink-secondary">
                         {t("admin.schedule.coach")}
                       </span>
-                      <select
-                        className="min-w-0 flex-1 rounded-lg border border-hairline bg-surface-raised px-2.5 py-1.5 text-sm disabled:opacity-60"
-                        value={coachEdits[s.id] ?? s.coach_id ?? ""}
-                        disabled={pending}
-                        onChange={(event) => {
-                          const nextCoachId = event.target.value;
-                          setCoachEdits((current) => ({
-                            ...current,
-                            [s.id]: nextCoachId,
-                          }));
-                          startTransition(async () => {
-                            const result = await updateSessionCoach(
-                              s.id,
-                              nextCoachId || null,
-                            );
-                            if (!result.ok) {
+                      {editingCoachId === s.id ? (
+                        <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                          <select
+                            aria-label={t("coach.class.assignedCoach")}
+                            className="min-h-10 min-w-0 flex-1 rounded-lg border border-hairline bg-surface-raised px-2.5 py-1.5 text-sm disabled:opacity-60"
+                            value={coachEdits[s.id] ?? s.coach_id ?? ""}
+                            disabled={pending}
+                            onChange={(event) =>
+                              setCoachEdits((current) => ({
+                                ...current,
+                                [s.id]: event.target.value,
+                              }))
+                            }
+                          >
+                            <option value="">{t("coach.class.noCoach")}</option>
+                            {staff.map((person) => (
+                              <option key={person.id} value={person.id}>
+                                {person.full_name}
+                              </option>
+                            ))}
+                          </select>
+                          <Button
+                            size="sm"
+                            disabled={pending}
+                            onClick={() =>
+                              startTransition(async () => {
+                                const result = await updateSessionCoach(
+                                  s.id,
+                                  (coachEdits[s.id] ?? s.coach_id) || null,
+                                );
+                                if (result.ok) {
+                                  setEditingCoachId(null);
+                                } else {
+                                  setCoachEdits((current) => ({
+                                    ...current,
+                                    [s.id]: s.coach_id ?? "",
+                                  }));
+                                }
+                              })
+                            }
+                          >
+                            {t("common.save")}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            disabled={pending}
+                            onClick={() => {
                               setCoachEdits((current) => ({
                                 ...current,
                                 [s.id]: s.coach_id ?? "",
                               }));
-                            }
-                          });
-                        }}
-                      >
-                        <option value="">{t("coach.class.noCoach")}</option>
-                        {staff.map((person) => (
-                          <option key={person.id} value={person.id}>
-                            {person.full_name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                              setEditingCoachId(null);
+                            }}
+                          >
+                            {t("common.cancel")}
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="mt-1 flex min-h-10 items-center justify-between gap-3 rounded-lg border border-hairline bg-surface-raised px-2.5 py-1">
+                          <span className="min-w-0 truncate text-sm">
+                            {staffName.get(coachEdits[s.id] ?? s.coach_id ?? "") ??
+                              t("coach.class.noCoach")}
+                          </span>
+                          <button
+                            type="button"
+                            className="inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg text-ink-secondary transition-colors hover:bg-row-hover hover:text-ink-primary"
+                            aria-label={t("coach.class.editCoach")}
+                            onClick={() => {
+                              setCoachEdits((current) => ({
+                                ...current,
+                                [s.id]: current[s.id] ?? s.coach_id ?? "",
+                              }));
+                              setEditingCoachId(s.id);
+                            }}
+                          >
+                            <Icon name="edit" className="h-4 w-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   {s.status === "scheduled" ? (
                     <div className="flex shrink-0 flex-wrap items-center gap-1.5 sm:justify-end">

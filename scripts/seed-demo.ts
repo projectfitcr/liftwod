@@ -11,6 +11,7 @@ import {
   clearScopedDemoData,
   createAdminClient,
   listAllAuthUsers,
+  seededAvatarUrl,
   type AdminClient,
 } from "./demo-shared.ts";
 
@@ -204,6 +205,7 @@ async function ensureDemoUsers(client: AdminClient, adminId: string) {
           nickname: user.nickname,
           email: user.email,
           phone: `+66 8${String(10000000 + index).slice(-8)}`,
+          avatar_url: seededAvatarUrl(user.email),
           preferred_language: user.language,
           approved_at: user.approved ? new Date().toISOString() : null,
           approved_by: user.approved ? adminId : null,

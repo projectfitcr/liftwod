@@ -176,6 +176,7 @@
   "coach.class.walkIn": "Add walk-in",
   "coach.class.walkInPick": "Pick a member…",
   "coach.class.assignedCoach": "Assigned coach",
+  "coach.class.editCoach": "Edit assigned coach",
   "coach.class.noCoach": "No coach assigned",
   "coach.class.coachUpdated": "Coach updated.",
   "coach.members.title": "Members",

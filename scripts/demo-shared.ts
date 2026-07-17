@@ -8,6 +8,14 @@ export const DEMO_PASSWORD = "Thailand1";
 export const DEMO_MARKER = "[LIFTWOD_DEMO]";
 export const PROTECTED_ADMIN_EMAIL = "jkarum@gmail.com";
 
+export function seededAvatarUrl(seed: string) {
+  const params = new URLSearchParams({
+    seed: seed.toLowerCase(),
+    backgroundColor: "b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf",
+  });
+  return `https://api.dicebear.com/9.x/adventurer-neutral/svg?${params}`;
+}
+
 // These maintenance scripts intentionally address tables dynamically so the
 // cleanup ordering can stay in one small helper. Runtime safety comes from the
 // hard project-ref guard above; app code continues to use generated DB types.

@@ -176,6 +176,7 @@
   "coach.class.walkIn": "เพิ่มผู้มาหน้างาน",
   "coach.class.walkInPick": "เลือกสมาชิก…",
   "coach.class.assignedCoach": "โค้ชประจำคลาส",
+  "coach.class.editCoach": "แก้ไขโค้ชประจำคลาส",
   "coach.class.noCoach": "ยังไม่ได้กำหนดโค้ช",
   "coach.class.coachUpdated": "อัปเดตโค้ชแล้ว",
   "coach.members.title": "สมาชิก",
