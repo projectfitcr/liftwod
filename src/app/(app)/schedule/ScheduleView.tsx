@@ -4,6 +4,8 @@ import { useCallback, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { ClassCard, type SessionView } from "@/components/schedule/ClassCard";
+import { Button } from "@/components/ui/Button";
+import { Dialog } from "@/components/ui/Dialog";
 import { addDays, isoDow } from "@/lib/dates";
 import { formatClockTime, formatDate } from "@/lib/format";
 import type { LocaleKey } from "@/lib/i18n";
@@ -42,16 +44,21 @@ export function ScheduleView({
   const storageKey = `${VIEW_STORAGE_KEY}.${userId}`;
   const getViewPreference = useCallback(
     (): ViewMode =>
-      window.localStorage.getItem(storageKey) === "calendar" ? "calendar" : "list",
+      window.localStorage.getItem(storageKey) === "list" ? "list" : "calendar",
     [storageKey],
   );
-  const view = useSyncExternalStore(subscribeToViewPreference, getViewPreference, () => "list");
+  const view = useSyncExternalStore(
+    subscribeToViewPreference,
+    getViewPreference,
+    () => "calendar",
+  );
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const byDate = new Map(days.map((day) => [day.date, day.sessions]));
   const dates = Array.from({ length: 14 }, (_, index) => addDays(startDate, index));
   const allSessions = dates.flatMap((date) => byDate.get(date) ?? []);
-  const selectedSession =
-    allSessions.find((session) => session.id === selectedSessionId) ?? allSessions[0] ?? null;
+  const selectedSession = selectedSessionId
+    ? allSessions.find((session) => session.id === selectedSessionId) ?? null
+    : null;
 
   function chooseView(nextView: ViewMode) {
     window.localStorage.setItem(storageKey, nextView);
@@ -154,24 +161,49 @@ export function ScheduleView({
             ))}
           </div>
 
-          {selectedSession ? (
-            <section className="scroll-mt-4">
-              <h2 className="mb-2 text-sm font-semibold text-ink-secondary">
-                {t("schedule.selectedSession")}
-              </h2>
-              <ClassCard
-                key={selectedSession.id}
-                session={selectedSession}
-                staffLink={isStaff}
-                nowIso={nowIso}
-                featured
-              />
-            </section>
-          ) : (
+          {allSessions.length === 0 ? (
             <p className="rounded-xl border border-hairline bg-surface p-4 text-sm text-ink-tertiary">
               {t("schedule.noClassesInRange")}
             </p>
-          )}
+          ) : null}
+
+          <Dialog
+            open={selectedSession !== null}
+            onClose={() => setSelectedSessionId(null)}
+            labelledBy="selected-session-title"
+          >
+            {selectedSession ? (
+              <div className="grid h-full grid-rows-[auto_minmax(0,1fr)] sm:h-auto">
+                <div className="flex items-start justify-between gap-3 border-b border-hairline bg-surface px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:rounded-t-2xl sm:pt-3">
+                  <div>
+                    <h2 id="selected-session-title" className="text-lg font-semibold">
+                      {t("schedule.selectedSession")}
+                    </h2>
+                    <p className="mt-0.5 text-xs text-ink-tertiary">
+                      {formatDate(language, selectedSession.starts_at)}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedSessionId(null)}
+                  >
+                    {t("common.close")}
+                  </Button>
+                </div>
+                <div className="overflow-y-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                  <ClassCard
+                    key={selectedSession.id}
+                    session={selectedSession}
+                    staffLink={isStaff}
+                    nowIso={nowIso}
+                    featured
+                  />
+                </div>
+              </div>
+            ) : null}
+          </Dialog>
         </div>
       )}
     </div>
