@@ -6,6 +6,7 @@ import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { ClassCard, type SessionView } from "@/components/schedule/ClassCard";
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
+import { Pill } from "@/components/ui/Pill";
 import { addDays, isoDow } from "@/lib/dates";
 import { formatClockTime, formatDate } from "@/lib/format";
 import type { LocaleKey } from "@/lib/i18n";
@@ -295,8 +296,17 @@ function CalendarDay({
                     : "border-hairline bg-surface-raised hover:border-primary/50"
                 } ${session.status === "cancelled" ? "opacity-60" : ""}`}
               >
-                <span className="block text-xs font-semibold tabular-nums">
-                  {formatClockTime(session.starts_at)}
+                <span className="flex items-center justify-between gap-1.5">
+                  <span className="text-xs font-semibold tabular-nums">
+                    {formatClockTime(session.starts_at)}
+                  </span>
+                  {booked || waitlisted ? (
+                    <Pill tone={booked ? "success" : "info"}>
+                      {booked
+                        ? t("booking.bookedPill")
+                        : t("booking.waitlistedPill")}
+                    </Pill>
+                  ) : null}
                 </span>
                 <span className="mt-0.5 block break-words text-[11px] leading-tight">
                   {session.name}
@@ -304,14 +314,10 @@ function CalendarDay({
                 <span className="mt-1 block text-[10px] text-ink-tertiary">
                   {session.status === "cancelled"
                     ? t("schedule.cancelledSession")
-                    : booked
-                      ? t("booking.bookedPill")
-                      : waitlisted
-                        ? t("booking.waitlistedPill")
-                        : t("schedule.spots", {
-                            booked: session.booked,
-                            capacity: session.capacity,
-                          })}
+                    : t("schedule.spots", {
+                        booked: session.booked,
+                        capacity: session.capacity,
+                      })}
                 </span>
               </button>
             );
