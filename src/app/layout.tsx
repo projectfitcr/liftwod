@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { IBM_Plex_Sans_Thai_Looped } from "next/font/google";
 import localFont from "next/font/local";
 import { RegisterSW } from "@/components/pwa/RegisterSW";
 import "./globals.css";
+
+const plexThaiLooped = IBM_Plex_Sans_Thai_Looped({
+  variable: "--font-english",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 const thSarabunPsk = localFont({
   src: [
@@ -26,7 +33,7 @@ const thSarabunPsk = localFont({
       style: "italic",
     },
   ],
-  variable: "--font-sans",
+  variable: "--font-thai",
   display: "swap",
   fallback: ["Tahoma", "ui-sans-serif", "system-ui", "sans-serif"],
 });
@@ -46,7 +53,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className={`${thSarabunPsk.variable} h-full antialiased`}>
+    <html
+      lang="th"
+      className={`${plexThaiLooped.variable} ${thSarabunPsk.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col">
         {children}
         <RegisterSW />

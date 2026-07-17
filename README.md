@@ -18,7 +18,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to self-host TH SarabunPSK for Thai and Latin interface text. The font files and their distribution notice live in `src/app/fonts`.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) with IBM Plex Sans Thai Looped for English text and self-hosted TH SarabunPSK for Thai glyphs. The Thai font files and their distribution notice live in `src/app/fonts`.
 
 ## Learn More
 

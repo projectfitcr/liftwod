@@ -90,14 +90,27 @@
   --radius-lg: var(--radius-lg);
   --radius-sm: var(--radius-sm);
   --font-sans:
-    "TH SarabunPSK", "TH Sarabun New", Tahoma, ui-sans-serif, system-ui,
-    sans-serif;
+    "IBM Plex Sans Thai Looped", "TH SarabunPSK", "TH Sarabun New", Tahoma,
+    ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   background: var(--canvas);
   color: var(--ink-primary);
-  font-family: var(--font-sans), sans-serif;
+  font-family:
+    var(--font-english), var(--font-thai), "TH Sarabun New", Tahoma,
+    ui-sans-serif, system-ui, sans-serif;
+  /* IBM Plex is already close to this x-height. TH SarabunPSK is enlarged
+     automatically to the same perceived reading size without scaling layout. */
+  font-size-adjust: 0.52;
+}
+
+code,
+kbd,
+samp,
+pre,
+.font-mono {
+  font-size-adjust: none;
 }
 
 /* TV whiteboard: same palette, bigger everything. Applied on the /tv route's
