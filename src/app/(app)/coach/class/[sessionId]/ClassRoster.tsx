@@ -9,7 +9,9 @@ import { Pill } from "@/components/ui/Pill";
 import { formatClockTime, formatDate } from "@/lib/format";
 import { checkIn, undoCheckIn } from "@/lib/attendance/actions";
 import { Avatar } from "@/components/ui/Avatar";
+import { Icon } from "@/components/shell/Icon";
 import { bookingMessage } from "@/components/schedule/ClassCard";
+import { updateSessionCoach } from "@/lib/schedule/actions";
 import {
   ScoreDrawer,
   type ExistingScore,
@@ -41,6 +43,7 @@ type DayResult = ExistingScore & {
 
 export function ClassRoster({
   session,
+  staff,
   roster,
   walkIns,
   addable,
@@ -56,7 +59,9 @@ export function ClassRoster({
     startsAt: string;
     status: "scheduled" | "cancelled";
     capacity: number;
+    coachId: string | null;
   };
+  staff: { id: string; name: string }[];
   roster: RosterRow[];
   walkIns: {
     memberId: string;
@@ -79,6 +84,9 @@ export function ClassRoster({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
+  const [selectedCoachId, setSelectedCoachId] = useState(session.coachId ?? "");
+  const [editingCoach, setEditingCoach] = useState(false);
+  const [coachMessage, setCoachMessage] = useState<"saved" | "error" | null>(null);
   const [walkInId, setWalkInId] = useState("");
   const [scoring, setScoring] = useState<{
     memberId: string;
@@ -114,6 +122,25 @@ export function ClassRoster({
     });
   }
 
+  function saveCoach() {
+    const previousCoachId = session.coachId ?? "";
+    setCoachMessage(null);
+    startTransition(async () => {
+      const result = await updateSessionCoach(
+        session.id,
+        selectedCoachId || null,
+      );
+      if (result.ok) {
+        setCoachMessage("saved");
+        setEditingCoach(false);
+        router.refresh();
+      } else {
+        setSelectedCoachId(previousCoachId);
+        setCoachMessage("error");
+      }
+    });
+  }
+
   const booked = roster.filter((r) => r.status === "booked");
   const waitlisted = roster.filter((r) => r.status === "waitlisted");
   const checkedInCount =
@@ -138,6 +165,71 @@ export function ClassRoster({
             booked: booked.length,
             capacity: session.capacity,
           })}
+        </p>
+        <div className="mt-3 max-w-sm">
+          <span className="mb-1 block text-xs font-medium text-ink-secondary">
+            {t("coach.class.assignedCoach")}
+          </span>
+          {editingCoach ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                aria-label={t("coach.class.assignedCoach")}
+                className="min-h-10 min-w-0 flex-1 rounded-lg border border-hairline bg-surface-raised px-3 py-2 text-sm disabled:opacity-60"
+                value={selectedCoachId}
+                disabled={pending}
+                onChange={(event) => setSelectedCoachId(event.target.value)}
+              >
+                <option value="">{t("coach.class.noCoach")}</option>
+                {staff.map((person) => (
+                  <option key={person.id} value={person.id}>
+                    {person.name}
+                  </option>
+                ))}
+              </select>
+              <Button size="sm" disabled={pending} onClick={saveCoach}>
+                {t("common.save")}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={pending}
+                onClick={() => {
+                  setSelectedCoachId(session.coachId ?? "");
+                  setCoachMessage(null);
+                  setEditingCoach(false);
+                }}
+              >
+                {t("common.cancel")}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex min-h-10 items-center justify-between gap-3 rounded-lg border border-hairline bg-surface-raised px-3 py-1.5">
+              <span className="min-w-0 truncate text-sm font-medium">
+                {staff.find((person) => person.id === selectedCoachId)?.name ??
+                  t("coach.class.noCoach")}
+              </span>
+              <button
+                type="button"
+                className="inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg text-ink-secondary transition-colors hover:bg-row-hover hover:text-ink-primary"
+                aria-label={t("coach.class.editCoach")}
+                onClick={() => {
+                  setCoachMessage(null);
+                  setEditingCoach(true);
+                }}
+              >
+                <Icon name="edit" className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+        </div>
+        <p aria-live="polite" className="mt-1 min-h-4 text-xs text-ink-tertiary">
+          {pending
+            ? t("common.loading")
+            : coachMessage === "saved"
+              ? t("coach.class.coachUpdated")
+              : coachMessage === "error"
+                ? t("common.error")
+                : ""}
         </p>
         {session.status === "cancelled" ? (
           <span className="mt-2 inline-flex">
@@ -190,7 +282,7 @@ export function ClassRoster({
                 })}
               </span>
             </h2>
-            <Card>
+            <Card className="px-3 py-1">
               {booked.length === 0 &&
               waitlisted.length === 0 &&
               walkIns.length === 0 ? (
@@ -202,18 +294,19 @@ export function ClassRoster({
                   {booked.map((r) => (
                     <li
                       key={r.bookingId}
-                      className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+                      className="flex items-center justify-between gap-2 py-2.5"
                     >
-                      <span className="flex min-w-0 items-center gap-2.5">
-                        <Avatar url={r.avatarUrl} name={r.name} size="md" />
-                        <p className="min-w-0 break-words text-sm font-medium">
+                      <span className="flex min-w-0 flex-1 items-center gap-2.5">
+                        <Avatar url={r.avatarUrl} name={r.name} size="sm" />
+                        <p className="min-w-0 truncate text-sm font-medium">
                           {r.name}
                         </p>
                       </span>
-                      <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                      <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1.5">
                         {drawerComponents.length > 0 && r.attendanceId ? (
                           <Button
                             variant="ghost"
+                            size="sm"
                             disabled={pending}
                             onClick={() =>
                               setScoring({ memberId: r.memberId, name: r.name })
@@ -229,6 +322,7 @@ export function ClassRoster({
                             <Pill tone="success">{t("checkin.done")}</Pill>
                             <Button
                               variant="ghost"
+                              size="sm"
                               disabled={pending}
                               onClick={() =>
                                 run(() =>
@@ -241,6 +335,8 @@ export function ClassRoster({
                           </>
                         ) : (
                           <Button
+                            size="sm"
+                            className="whitespace-nowrap"
                             disabled={pending}
                             onClick={() =>
                               run(() => checkIn(session.id, r.memberId))
@@ -255,21 +351,22 @@ export function ClassRoster({
                   {walkIns.map((w) => (
                     <li
                       key={w.attendanceId}
-                      className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+                      className="flex items-center justify-between gap-2 py-2.5"
                     >
-                      <span className="flex min-w-0 items-center gap-2.5">
-                        <Avatar url={w.avatarUrl} name={w.name} size="md" />
-                        <p className="min-w-0 break-words text-sm font-medium">
+                      <span className="flex min-w-0 flex-1 items-center gap-2.5">
+                        <Avatar url={w.avatarUrl} name={w.name} size="sm" />
+                        <p className="min-w-0 truncate text-sm font-medium">
                           {w.name}{" "}
                           <span className="text-xs text-ink-tertiary">
                             · {t("coach.class.walkIn")}
                           </span>
                         </p>
                       </span>
-                      <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                      <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1.5">
                         {drawerComponents.length > 0 ? (
                           <Button
                             variant="ghost"
+                            size="sm"
                             disabled={pending}
                             onClick={() =>
                               setScoring({ memberId: w.memberId, name: w.name })
@@ -283,6 +380,7 @@ export function ClassRoster({
                         <Pill tone="success">{t("checkin.done")}</Pill>
                         <Button
                           variant="ghost"
+                          size="sm"
                           disabled={pending}
                           onClick={() =>
                             run(() => undoCheckIn(w.attendanceId, session.id))
@@ -296,17 +394,19 @@ export function ClassRoster({
                   {waitlisted.map((r) => (
                     <li
                       key={r.bookingId}
-                      className="flex flex-col gap-3 py-3 opacity-75 sm:flex-row sm:items-center sm:justify-between"
+                      className="flex items-center justify-between gap-2 py-2.5 opacity-75"
                     >
-                      <span className="flex min-w-0 items-center gap-2.5">
-                        <Avatar url={r.avatarUrl} name={r.name} size="md" />
-                        <p className="min-w-0 break-words text-sm">{r.name}</p>
+                      <span className="flex min-w-0 flex-1 items-center gap-2.5">
+                        <Avatar url={r.avatarUrl} name={r.name} size="sm" />
+                        <p className="min-w-0 truncate text-sm">{r.name}</p>
                       </span>
-                      <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                      <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1.5">
                         <Pill tone="info">{t("booking.waitlistedPill")}</Pill>
                         {!r.attendanceId ? (
                           <Button
                             variant="secondary"
+                            size="sm"
+                            className="whitespace-nowrap"
                             disabled={pending}
                             onClick={() =>
                               run(() => checkIn(session.id, r.memberId))

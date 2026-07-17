@@ -90,6 +90,27 @@ export function ClassCard({
     });
   }
 
+  function cancelCurrentBooking() {
+    const booking = session.myBooking;
+    if (!booking) return;
+
+    const isWaitlisted = booking.status === "waitlisted";
+    const confirmed = window.confirm(
+      isWaitlisted
+        ? t("booking.leaveWaitlistConfirm")
+        : t("booking.cancelConfirm"),
+    );
+    if (!confirmed) return;
+
+    run(async () => {
+      const result = await cancelBooking(booking.id);
+      if (result.ok && isWaitlisted && result.code === "CANCELLED") {
+        return { ...result, code: "WAITLIST_CANCELLED" };
+      }
+      return result;
+    });
+  }
+
   return (
     <div
       className={`rounded-xl border bg-surface p-4 shadow-[var(--shadow-card)] ${
@@ -155,13 +176,13 @@ export function ClassCard({
                   </Pill>
                   {!past ? (
                     <Button
-                      variant="ghost"
+                      variant="danger"
                       disabled={pending}
-                      onClick={() =>
-                        run(() => cancelBooking(session.myBooking!.id))
-                      }
+                      onClick={cancelCurrentBooking}
                     >
-                      {t("booking.cancel")}
+                      {session.myBooking.status === "waitlisted"
+                        ? t("booking.leaveWaitlist")
+                        : t("booking.cancel")}
                     </Button>
                   ) : null}
                 </>

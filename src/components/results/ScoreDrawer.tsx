@@ -7,6 +7,7 @@ import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Button } from "@/components/ui/Button";
 import { Drawer } from "@/components/ui/Drawer";
 import { logResult, type ScoreValues } from "@/lib/results/actions";
+import { loadInputValue, poundsToKilograms } from "@/lib/format";
 import type { LocaleKey } from "@/lib/i18n";
 import type { Database } from "@/lib/supabase/database.types";
 
@@ -45,7 +46,10 @@ function fieldsFor(existingScore?: ExistingScore): Record<string, string> {
         : "",
     rounds: existingScore.rounds != null ? String(existingScore.rounds) : "",
     reps: existingScore.reps != null ? String(existingScore.reps) : "",
-    load: existingScore.load_kg != null ? String(existingScore.load_kg) : "",
+    load:
+      existingScore.load_kg != null
+        ? loadInputValue(existingScore.load_kg)
+        : "",
     distance:
       existingScore.distance_m != null ? String(existingScore.distance_m) : "",
     calories:
@@ -117,7 +121,7 @@ export function ScoreDrawer({
       values.rounds = Number(fields.rounds) || 0;
       values.reps = Number(fields.reps) || 0;
     } else if (component.scoreType === "load") {
-      values.loadKg = Number(fields.load) || 0;
+      values.loadKg = poundsToKilograms(Number(fields.load) || 0);
     } else if (component.scoreType === "reps") {
       values.reps = Number(fields.reps) || 0;
     } else if (component.scoreType === "distance") {
@@ -240,7 +244,7 @@ export function ScoreDrawer({
         ) : component?.scoreType === "load" ? (
           <label className="block">
             <span className="mb-1 block text-sm text-ink-tertiary">
-              {t("scorelog.loadKg")}
+              {t("scorelog.loadLb")}
             </span>
             <input
               className={inputCls}

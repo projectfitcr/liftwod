@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Field } from "@/components/ui/Field";
 import { Pill } from "@/components/ui/Pill";
+import { Icon } from "@/components/shell/Icon";
 import { formatClockTime, formatDate } from "@/lib/format";
 import {
   cancelSession,
   createTemplate,
   setTemplateActive,
   updateSessionCapacity,
+  updateSessionCoach,
 } from "@/lib/schedule/actions";
 import type { LocaleKey } from "@/lib/i18n";
 import type { Database } from "@/lib/supabase/database.types";
@@ -44,6 +46,8 @@ export function ScheduleAdmin({
   const [capacity, setCapacity] = useState("12");
   const [coachId, setCoachId] = useState("");
   const [capEdits, setCapEdits] = useState<Record<string, string>>({});
+  const [coachEdits, setCoachEdits] = useState<Record<string, string>>({});
+  const [editingCoachId, setEditingCoachId] = useState<string | null>(null);
 
   const staffName = new Map(staff.map((s) => [s.id, s.full_name]));
 
@@ -212,8 +216,11 @@ export function ScheduleAdmin({
           ) : (
             <ul className="divide-y divide-hairline">
               {sessions.map((s) => (
-                <li key={s.id} className="flex items-center justify-between gap-3 py-2.5">
-                  <div className="min-w-0">
+                <li
+                  key={s.id}
+                  className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0 flex-1">
                     <p className="break-words text-sm">
                       <span className="whitespace-nowrap">
                         {formatDate(language, s.session_date)}{" "}
@@ -230,9 +237,94 @@ export function ScheduleAdmin({
                       {t("schedule.spots", { booked: s.booked, capacity: s.capacity })}
                       {s.waiting > 0 ? ` · ${t("schedule.waiting", { count: s.waiting })}` : ""}
                     </p>
+                    <div className="mt-2 max-w-sm">
+                      <span className="shrink-0 text-xs font-medium text-ink-secondary">
+                        {t("admin.schedule.coach")}
+                      </span>
+                      {editingCoachId === s.id ? (
+                        <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                          <select
+                            aria-label={t("coach.class.assignedCoach")}
+                            className="min-h-10 min-w-0 flex-1 rounded-lg border border-hairline bg-surface-raised px-2.5 py-1.5 text-sm disabled:opacity-60"
+                            value={coachEdits[s.id] ?? s.coach_id ?? ""}
+                            disabled={pending}
+                            onChange={(event) =>
+                              setCoachEdits((current) => ({
+                                ...current,
+                                [s.id]: event.target.value,
+                              }))
+                            }
+                          >
+                            <option value="">{t("coach.class.noCoach")}</option>
+                            {staff.map((person) => (
+                              <option key={person.id} value={person.id}>
+                                {person.full_name}
+                              </option>
+                            ))}
+                          </select>
+                          <Button
+                            size="sm"
+                            disabled={pending}
+                            onClick={() =>
+                              startTransition(async () => {
+                                const result = await updateSessionCoach(
+                                  s.id,
+                                  (coachEdits[s.id] ?? s.coach_id) || null,
+                                );
+                                if (result.ok) {
+                                  setEditingCoachId(null);
+                                } else {
+                                  setCoachEdits((current) => ({
+                                    ...current,
+                                    [s.id]: s.coach_id ?? "",
+                                  }));
+                                }
+                              })
+                            }
+                          >
+                            {t("common.save")}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            disabled={pending}
+                            onClick={() => {
+                              setCoachEdits((current) => ({
+                                ...current,
+                                [s.id]: s.coach_id ?? "",
+                              }));
+                              setEditingCoachId(null);
+                            }}
+                          >
+                            {t("common.cancel")}
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="mt-1 flex min-h-10 items-center justify-between gap-3 rounded-lg border border-hairline bg-surface-raised px-2.5 py-1">
+                          <span className="min-w-0 truncate text-sm">
+                            {staffName.get(coachEdits[s.id] ?? s.coach_id ?? "") ??
+                              t("coach.class.noCoach")}
+                          </span>
+                          <button
+                            type="button"
+                            className="inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg text-ink-secondary transition-colors hover:bg-row-hover hover:text-ink-primary"
+                            aria-label={t("coach.class.editCoach")}
+                            onClick={() => {
+                              setCoachEdits((current) => ({
+                                ...current,
+                                [s.id]: current[s.id] ?? s.coach_id ?? "",
+                              }));
+                              setEditingCoachId(s.id);
+                            }}
+                          >
+                            <Icon name="edit" className="h-4 w-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   {s.status === "scheduled" ? (
-                    <div className="flex shrink-0 items-center gap-1.5">
+                    <div className="flex shrink-0 flex-wrap items-center gap-1.5 sm:justify-end">
                       <input
                         type="number"
                         min={1}

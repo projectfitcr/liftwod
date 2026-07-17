@@ -8,6 +8,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
+import { seededAvatarUrl } from "./demo-shared.ts";
 
 const envFile = readFileSync(join(process.cwd(), ".env.local"), "utf8");
 const env: Record<string, string> = {};
@@ -65,6 +66,7 @@ async function main() {
       .update({
         role: u.role,
         full_name: u.name,
+        avatar_url: seededAvatarUrl(u.email),
         approved_at: u.approved ? new Date().toISOString() : null,
         is_active: true,
       })

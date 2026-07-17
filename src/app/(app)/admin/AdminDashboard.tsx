@@ -35,19 +35,19 @@ export function AdminDashboard({
     {
       label: "admin.dashboard.pending",
       count: pending,
-      href: "/admin/users",
+      href: "/admin/people",
       tone: "text-primary-ink",
     },
     {
       label: "admin.dashboard.renewals",
       count: renewals,
-      href: "/admin/memberships",
+      href: "/admin/people",
       tone: "text-warning-ink",
     },
     {
       label: "admin.dashboard.expired",
       count: expired,
-      href: "/admin/memberships",
+      href: "/admin/people",
       tone: "text-danger-ink",
     },
     {

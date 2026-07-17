@@ -8,7 +8,13 @@ import {
 } from "@/components/results/AddBaselinePr";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
-import { formatDate, formatMMSS, formatNumber, formatScore } from "@/lib/format";
+import {
+  formatDate,
+  formatLoadPounds,
+  formatMMSS,
+  formatNumber,
+  formatScore,
+} from "@/lib/format";
 import { localizedName, type LocaleKey } from "@/lib/i18n";
 import type { Database } from "@/lib/supabase/database.types";
 
@@ -47,7 +53,7 @@ function formatPrValue(language: "en" | "th", p: PrRow): string {
   if (p.scoreType === "time") return formatMMSS(p.value);
   if (p.scoreType === "rounds_reps")
     return `${Math.floor(p.value / 1000)}+${p.value % 1000}`;
-  if (p.scoreType === "load") return `${formatNumber(language, p.value)} kg`;
+  if (p.scoreType === "load") return formatLoadPounds(language, p.value);
   return formatNumber(language, p.value);
 }
 

@@ -5,10 +5,12 @@ import { requireAdmin, requireStaff } from "@/lib/auth/guards";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
-function revalidate() {
+function revalidate(sessionId?: string) {
   revalidatePath("/admin/schedule");
+  revalidatePath("/coach/classes");
   revalidatePath("/schedule");
   revalidatePath("/today");
+  if (sessionId) revalidatePath(`/coach/class/${sessionId}`);
 }
 
 /** generate_sessions is EXECUTE-revoked for authenticated (cron/service only),
@@ -72,8 +74,38 @@ export async function updateSessionCapacity(sessionId: string, capacity: number)
     .from("class_sessions")
     .update({ capacity })
     .eq("id", sessionId);
-  revalidate();
+  revalidate(sessionId);
   return { ok: !error };
+}
+
+export async function updateSessionCoach(
+  sessionId: string,
+  coachId: string | null,
+) {
+  await requireStaff();
+  const supabase = await createSupabaseServerClient();
+
+  if (coachId) {
+    const { data: coach, error: coachError } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", coachId)
+      .in("role", ["coach", "admin"])
+      .eq("is_active", true)
+      .not("approved_at", "is", null)
+      .maybeSingle();
+    if (coachError || !coach) return { ok: false };
+  }
+
+  const { data: session, error } = await supabase
+    .from("class_sessions")
+    .update({ coach_id: coachId })
+    .eq("id", sessionId)
+    .select("id")
+    .maybeSingle();
+
+  if (!error && session) revalidate(sessionId);
+  return { ok: !error && Boolean(session) };
 }
 
 export async function cancelSession(sessionId: string) {
@@ -83,5 +115,5 @@ export async function cancelSession(sessionId: string) {
     .from("class_sessions")
     .update({ status: "cancelled" })
     .eq("id", sessionId);
-  revalidate();
+  revalidate(sessionId);
 }

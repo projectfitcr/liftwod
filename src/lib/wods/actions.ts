@@ -207,16 +207,47 @@ export async function createExercise(input: {
   isTrackedLift: boolean;
 }) {
   await requireStaff();
+  const nameEn = input.nameEn.trim();
+  if (!nameEn) return { ok: false as const, code: "NAME_REQUIRED" as const };
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("exercises").insert({
-    name_en: input.nameEn,
-    name_th: input.nameTh || null,
+    name_en: nameEn,
+    name_th: input.nameTh.trim() || null,
     category: input.category,
-    demo_url: input.demoUrl || null,
+    demo_url: input.demoUrl.trim() || null,
     is_tracked_lift: input.isTrackedLift,
   });
   revalidatePath("/coach/exercises");
-  return { ok: !error };
+  return { ok: !error, code: error ? "SAVE_FAILED" as const : undefined };
+}
+
+export async function updateExercise(
+  exerciseId: string,
+  input: {
+    nameEn: string;
+    nameTh: string;
+    category: ExerciseCategory;
+    demoUrl: string;
+    isTrackedLift: boolean;
+  },
+) {
+  await requireStaff();
+  const nameEn = input.nameEn.trim();
+  if (!nameEn) return { ok: false as const, code: "NAME_REQUIRED" as const };
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase
+    .from("exercises")
+    .update({
+      name_en: nameEn,
+      name_th: input.nameTh.trim() || null,
+      category: input.category,
+      demo_url: input.demoUrl.trim() || null,
+      is_tracked_lift: input.isTrackedLift,
+    })
+    .eq("id", exerciseId);
+  revalidatePath("/coach/exercises");
+  return { ok: !error, code: error ? "SAVE_FAILED" as const : undefined };
 }
 
 export async function setExerciseActive(exerciseId: string, isActive: boolean) {
